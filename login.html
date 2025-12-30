@@ -1,0 +1,3726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Izhai - Draped in Elegance</title>
+    <meta name="description" content="Discover handcrafted sarees and kurtis at Izhai - premium Indian ethnic wear">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Playball&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        /* ============================================
+           THEME TUNING & TOKENS
+           ============================================ */
+        :root {
+            /* 1. Colors - "Royal Purple Glass" */
+            --theme-primary: #7c4dff;
+            --theme-primary-dark: #4a0e4e;
+            --theme-accent: #651fff;
+
+            /* 2. Radius - Tunable Roundness */
+            --radius-pill: 100px;
+            /* Fully rounded triggers */
+            --radius-card: 24px;
+            /* Soft card corners */
+            --radius-sm: 12px;
+
+            /* 3. Shadows */
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 40px rgba(124, 77, 255, 0.2);
+            --shadow-focus: 0 0 0 3px rgba(124, 77, 255, 0.25);
+
+            /* 4. Transitions */
+            --ease-lux: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* Global Focus Ring for Accessibility & Theme */
+        :focus-visible {
+            outline: none;
+            box-shadow: var(--shadow-focus);
+            border-color: var(--theme-primary);
+        }
+
+        /* CONSISTENT INTERACTIVE STATES (Buttons, Inputs, Selects) */
+        button,
+        select,
+        input,
+        .category-card-new,
+        .product-card {
+            transition: all 0.4s var(--ease-lux);
+        }
+
+        button:active,
+        .category-card-new:active {
+            transform: scale(0.96);
+        }
+
+        ::selection {
+            background: var(--theme-primary);
+            color: white;
+        }
+
+        /* ============================================
+   CATEGORY SCREEN - CENTERED GRID REDESIGN
+   ============================================ */
+
+        /* Container for the centered grid */
+        .centered-category-container {
+            width: 100%;
+            min-height: 100%;
+            /* Allow scrolling */
+            display: flex;
+            align-items: center;
+            /* Center-align if content is short */
+            justify-content: center;
+            padding: 80px 20px 100px;
+            /* Extra padding for nav/header */
+            box-sizing: border-box;
+        }
+
+        /* Allow scrolling on the screen itself */
+        #categoriesScreen {
+            display: block;
+            /* Override flex to allow standard flow */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* The Grid Itself */
+        .simple-category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Category Card Styling */
+        .category-card-new {
+            position: relative;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            /* Consistent aspect ratio */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Hover Effects */
+        .category-card-new:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(124, 77, 255, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(124, 77, 255, 0.3);
+        }
+
+        /* Card Image (Background) */
+        .category-card-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            z-index: 0;
+        }
+
+        .category-card-new:hover .category-card-img {
+            transform: scale(1.1);
+        }
+
+        /* Overlay */
+        .category-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+
+        .category-card-new:hover .category-card-overlay {
+            background: linear-gradient(to top, rgba(74, 28, 111, 0.7) 0%, rgba(124, 77, 255, 0.2) 100%);
+        }
+
+        /* Content */
+        .category-card-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            color: white;
+            width: 100%;
+        }
+
+        .category-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+
+        .category-card-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease 0.1s;
+        }
+
+        .category-card-new:hover .category-card-title {
+            transform: translateY(0);
+        }
+
+        .category-card-new:hover .category-card-subtitle {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .simple-category-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 0 20px;
+            }
+
+            .category-card-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .centered-category-container {
+                padding: 80px 16px 100px;
+                /* Adjusted padding for mobile */
+                align-items: flex-start;
+                /* Ensure start alignment for scrolling */
+            }
+
+            .simple-category-grid {
+                grid-template-columns: 1fr;
+                /* Single column - Old Mobile Layout Feel */
+                gap: 20px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .category-card-new {
+                aspect-ratio: 16/9;
+                /* Wider cards for mobile */
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                /* Softer shadow */
+            }
+
+            .category-card-title {
+                transform: translateY(0);
+                font-size: 24px;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .category-card-subtitle {
+                opacity: 1;
+                transform: translateY(0);
+                font-size: 14px;
+            }
+        }
+
+        /* ============================================
+   CATEGORY DETAIL SCREEN - SEARCH BAR ON TOP
+   ============================================ */
+
+        @media (min-width: 1024px) {
+
+            /* Move header to top and make it full-width */
+            .category-header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                width: 100%;
+                padding: 20px 60px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(30px);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                display: flex;
+                align-items: center;
+                gap: 24px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            }
+
+            /* Back button */
+            .category-header .icon-btn:first-child {
+                margin-right: 0;
+                flex-shrink: 0;
+            }
+
+            /* Category title */
+            #categoryDetailTitle {
+                font-size: 28px;
+                flex-shrink: 0;
+                margin-right: auto;
+            }
+
+            /* Search button - expand to search bar on click */
+            .category-header .icon-btn:last-child {
+                flex-shrink: 0;
+                width: auto;
+                max-width: 400px;
+                flex: 1;
+                height: 48px;
+                border-radius: 24px;
+                background: rgba(124, 77, 255, 0.08);
+                border: 2px solid transparent;
+                padding: 0 20px;
+                transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .category-header .icon-btn:last-child svg {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .category-header .icon-btn:last-child::after {
+                content: 'Search in this category...';
+                position: absolute;
+                left: 50px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 15px;
+                color: var(--text-secondary);
+                font-weight: 500;
+                opacity: 0.6;
+            }
+
+            .category-header .icon-btn:last-child:hover {
+                background: rgba(124, 77, 255, 0.12);
+                border-color: var(--purple-500);
+                transform: scale(1.02);
+            }
+
+            .category-header .icon-btn:last-child:focus {
+                background: white;
+                border-color: var(--purple-500);
+                box-shadow: 0 0 0 4px rgba(124, 77, 255, 0.1);
+            }
+
+            /* Product grid spacing adjustment */
+            #categoryDetailGrid {
+                padding: 40px 60px 120px;
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media (min-width: 1920px) {
+            .category-header {
+                padding: 24px 100px;
+            }
+
+            #categoryDetailGrid {
+                padding: 60px 100px 140px;
+                max-width: 2000px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Smooth transitions for layout changes */
+        .bento-item,
+        .glass-card {
+            will-change: transform;
+            cursor: pointer;
+            /* Ensure clickability indication */
+        }
+
+        .category-header {
+            will-change: transform, background-color;
+        }
+
+        /* ============================================
+   CATEGORY DETAIL SCREEN - FIXED LAYOUT
+   ============================================ */
+
+        /* Hide the old floating search bar on desktop */
+        @media (min-width: 1024px) {
+            #categoryDetailScreen .category-header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                width: 100%;
+                padding: 16px 60px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                display: grid;
+                grid-template-columns: auto auto 1fr auto;
+                align-items: center;
+                gap: 20px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            }
+
+            /* Back button styling */
+            .category-header .icon-btn:first-child {
+                margin-right: 0;
+                grid-column: 1;
+            }
+
+            /* Title styling */
+            #categoryDetailTitle {
+                font-size: 24px;
+                white-space: nowrap;
+                grid-column: 2;
+                margin: 0;
+            }
+
+            /* Search bar container - make it expand */
+            .category-header .icon-btn:last-child {
+                grid-column: 3;
+                width: 100%;
+                max-width: 500px;
+                height: 44px;
+                border-radius: 22px;
+                background: rgba(124, 77, 255, 0.06);
+                border: 1px solid rgba(124, 77, 255, 0.15);
+                padding: 0 16px 0 44px;
+                display: flex;
+                align-items: center;
+                position: relative;
+                transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+                justify-self: end;
+            }
+
+            .category-header .icon-btn:last-child svg {
+                position: absolute;
+                left: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 20px;
+                stroke: var(--purple-500);
+            }
+
+            /* Add search placeholder text */
+            .category-header .icon-btn:last-child::after {
+                content: 'Search in this category...';
+                font-size: 14px;
+                color: var(--text-secondary);
+                font-weight: 400;
+                white-space: nowrap;
+            }
+
+            .category-header .icon-btn:last-child:hover {
+                background: rgba(124, 77, 255, 0.1);
+                border-color: var(--purple-500);
+                box-shadow: 0 2px 8px rgba(124, 77, 255, 0.15);
+            }
+
+            /* Product grid - proper spacing below header */
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 32px 60px 120px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        /* Large desktop optimization */
+        @media (min-width: 1440px) {
+            #categoryDetailScreen .category-header {
+                padding: 20px 80px;
+                gap: 32px;
+            }
+
+            #categoryDetailTitle {
+                font-size: 28px;
+            }
+
+            .category-header .icon-btn:last-child {
+                max-width: 600px;
+                height: 48px;
+                padding: 0 20px 0 52px;
+            }
+
+            .category-header .icon-btn:last-child svg {
+                left: 18px;
+                width: 22px;
+                height: 22px;
+            }
+
+            .category-header .icon-btn:last-child::after {
+                font-size: 15px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 40px 80px 140px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
+                max-width: 1800px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Extra large screens */
+        @media (min-width: 1920px) {
+            #categoryDetailScreen .category-header {
+                padding: 24px 120px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 60px 120px 160px;
+                max-width: 2200px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        /* Ensure smooth transitions */
+        .category-header {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        #categoryDetailGrid {
+            transition: padding 0.3s ease;
+        }
+
+        /* ============================================
+   CATEGORY DETAIL SCREEN - COMPLETE FIX
+   ============================================ */
+
+        /* Ensure the header is visible and properly styled */
+        @media (min-width: 1024px) {
+
+            /* Category Detail Screen Container */
+            #categoryDetailScreen {
+                display: block;
+                padding-top: 0;
+                overflow-y: auto;
+                /* Enable scrolling on desktop */
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Sticky Header with Back Button, Title, and Search */
+            #categoryDetailScreen .category-header,
+            #categoryDetailScreen .app-header.category-header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                width: 100%;
+                height: auto;
+                width: 100%;
+                height: auto;
+                padding: 20px 60px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                display: flex;
+                align-items: center;
+                gap: 24px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                margin-bottom: 0;
+            }
+
+            /* Back Button */
+            .category-header .icon-btn:first-child {
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                margin-right: 0;
+                background: rgba(0, 0, 0, 0.03);
+                border-radius: 50%;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .category-header .icon-btn:first-child:hover {
+                background: rgba(124, 77, 255, 0.1);
+                transform: scale(1.05);
+            }
+
+            /* Category Title */
+            #categoryDetailTitle {
+                font-family: 'Playfair Display', serif;
+                font-size: 28px;
+                font-weight: 700;
+                color: var(--purple-900);
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            /* Spacer to push search to the right */
+            .category-header>div[style*="flex:1"],
+            .category-header>div:nth-child(3) {
+                flex: 1;
+            }
+
+            /* Search Button - Styled as Search Bar */
+            .category-header .icon-btn:last-child {
+                flex-shrink: 0;
+                width: auto;
+                min-width: 400px;
+                max-width: 500px;
+                height: 48px;
+                border-radius: 24px;
+                background: rgba(124, 77, 255, 0.06);
+                border: 1.5px solid rgba(124, 77, 255, 0.15);
+                padding: 0 20px 0 52px;
+                display: flex;
+                align-items: center;
+                position: relative;
+                transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+                cursor: pointer;
+            }
+
+            /* Search Icon */
+            .category-header .icon-btn:last-child svg {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 22px;
+                height: 22px;
+                stroke: var(--purple-500);
+                stroke-width: 2;
+            }
+
+            /* Search Placeholder Text */
+            .category-header .icon-btn:last-child::after {
+                content: 'Search in this category...';
+                font-size: 15px;
+                color: var(--text-secondary);
+                font-weight: 400;
+                white-space: nowrap;
+            }
+
+            /* Search Button Hover */
+            .category-header .icon-btn:last-child:hover {
+                background: rgba(124, 77, 255, 0.1);
+                border-color: var(--purple-400);
+                box-shadow: 0 4px 12px rgba(124, 77, 255, 0.15);
+                transform: translateY(-1px);
+            }
+
+            /* Search Button Active/Focus */
+            .category-header .icon-btn:last-child:active {
+                background: white;
+                border-color: var(--purple-500);
+                box-shadow: 0 0 0 4px rgba(124, 77, 255, 0.1);
+                transform: scale(0.98);
+            }
+
+            /* Product Grid - Proper spacing */
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 40px 60px 120px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
+            }
+
+            /* Product Cards - Better sizing */
+            #categoryDetailGrid .product-card {
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+
+        /* Large Desktop (1440px+) */
+        @media (min-width: 1440px) {
+            .category-header {
+                padding: 24px 80px;
+                gap: 32px;
+            }
+
+            #categoryDetailTitle {
+                font-size: 32px;
+            }
+
+            .category-header .icon-btn:last-child {
+                min-width: 500px;
+                max-width: 600px;
+                height: 52px;
+                padding: 0 24px 0 56px;
+            }
+
+            .category-header .icon-btn:last-child svg {
+                left: 20px;
+                width: 24px;
+                height: 24px;
+            }
+
+            .category-header .icon-btn:last-child::after {
+                font-size: 16px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 50px 80px 140px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
+                max-width: 1800px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Extra Large Screens (1920px+) */
+        @media (min-width: 1920px) {
+            .category-header {
+                padding: 28px 120px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 60px 120px 160px;
+                max-width: 2200px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        /* Ensure proper stacking context */
+
+        .category-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            /* Increased to ensure it stays above content */
+        }
+
+        /* Smooth scroll behavior */
+        #categoryDetailScreen {
+            scroll-behavior: smooth;
+        }
+
+        /* ============================================
+   CATEGORY DETAIL SCREEN - MOBILE LAYOUT FIX
+   Make it look like desktop with header on top
+   ============================================ */
+
+        /* Mobile: Header at the top (same as desktop) */
+        @media (max-width: 1023px) {
+            #categoryDetailScreen {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            /* Sticky Header at Top */
+            #categoryDetailScreen .category-header,
+            #categoryDetailScreen .app-header.category-header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                width: 100%;
+                padding: 16px 20px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                flex-shrink: 0;
+            }
+
+            /* Back Button */
+            .category-header .icon-btn:first-child {
+                flex-shrink: 0;
+                width: 40px;
+                height: 40px;
+                margin: 0;
+                background: rgba(0, 0, 0, 0.04);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .category-header .icon-btn:first-child svg {
+                width: 20px;
+                height: 20px;
+                stroke-width: 2.5;
+            }
+
+            /* Category Title */
+            #categoryDetailTitle {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--purple-900);
+                margin: 0;
+                flex: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Search Button */
+            .category-header .icon-btn:last-child {
+                flex-shrink: 0;
+                width: 40px;
+                height: 40px;
+                background: rgba(124, 77, 255, 0.08);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(124, 77, 255, 0.15);
+            }
+
+            .category-header .icon-btn:last-child svg {
+                width: 20px;
+                height: 20px;
+                stroke: var(--purple-600);
+                position: static;
+                transform: none;
+            }
+
+            /* Hide desktop search placeholder on mobile */
+            .category-header .icon-btn:last-child::after {
+                display: none;
+            }
+
+            /* Scrollable Product Grid Container */
+            #categoryDetailScreen>div:last-child {
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Product Grid */
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 20px 16px 100px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            /* Product Cards - Better mobile sizing */
+            #categoryDetailGrid .product-card {
+                border-radius: var(--radius-lg);
+                overflow: hidden;
+            }
+
+            #categoryDetailGrid .product-img {
+                aspect-ratio: 3/4;
+            }
+
+            #categoryDetailGrid .product-name {
+                font-size: 14px;
+                line-height: 1.3;
+            }
+
+            #categoryDetailGrid .product-price {
+                font-size: 15px;
+            }
+
+            #categoryDetailGrid .product-original-price {
+                font-size: 12px;
+            }
+        }
+
+        /* Small phones (under 375px) */
+        @media (max-width: 374px) {
+            #categoryDetailTitle {
+                font-size: 18px;
+            }
+
+            .category-header .icon-btn:first-child,
+            .category-header .icon-btn:last-child {
+                width: 36px;
+                height: 36px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 16px 12px 100px;
+                gap: 12px;
+            }
+        }
+
+        /* Tablets (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .category-header {
+                padding: 20px 32px;
+                gap: 20px;
+            }
+
+            #categoryDetailTitle {
+                font-size: 24px;
+            }
+
+            .category-header .icon-btn:first-child,
+            .category-header .icon-btn:last-child {
+                width: 44px;
+                height: 44px;
+            }
+
+            .category-header .icon-btn svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 32px 32px 120px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            #categoryDetailGrid .product-name {
+                font-size: 15px;
+            }
+
+            #categoryDetailGrid .product-price {
+                font-size: 16px;
+            }
+        }
+
+        /* Fix for safe area on notched devices */
+        @supports (padding: max(0px)) {
+            .category-header {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(16px, env(safe-area-inset-top));
+            }
+        }
+
+        /* Smooth scrolling */
+        #categoryDetailScreen>div:last-child {
+            scroll-behavior: smooth;
+        }
+
+        /* Better touch feedback */
+        @media (max-width: 1023px) {
+            .category-header .icon-btn:active {
+                transform: scale(0.9);
+                background: rgba(124, 77, 255, 0.15);
+            }
+
+            #categoryDetailGrid .product-card:active {
+                transform: scale(0.97);
+            }
+        }
+
+        /* Loading state skeleton (optional) */
+        .category-grid-loading {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 20px 16px;
+        }
+
+        .skeleton-card {
+            background: linear-gradient(90deg, #f0f0f5 25%, #e8e8f0 50%, #f0f0f5 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-lg);
+            height: 300px;
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .category-grid-loading {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                padding: 32px;
+            }
+        }
+
+        /* Pull-to-refresh indicator space (for native feel) */
+        #categoryDetailScreen>div:last-child::before {
+            content: '';
+            display: block;
+            height: 20px;
+        }
+
+        /* Bottom nav spacing */
+        @media (max-width: 1023px) {
+            #categoryDetailScreen #categoryDetailGrid {
+                padding-bottom: calc(var(--bottom-nav-height) + 32px);
+            }
+        }
+
+        /* Hide any desktop-only elements on mobile */
+        @media (max-width: 1023px) {
+            .category-header .icon-btn:last-child {
+                min-width: unset;
+                max-width: unset;
+                width: 40px;
+                padding: 0;
+                border-radius: 50%;
+            }
+        }
+
+        /* Animated Search Button on Mobile */
+        @media (max-width: 1023px) {
+            .category-header .icon-btn:last-child {
+                position: relative;
+                overflow: visible;
+            }
+
+            /* Ripple effect on tap */
+            .category-header .icon-btn:last-child::before {
+                content: '';
+                position: absolute;
+                inset: -4px;
+                border-radius: 50%;
+                border: 2px solid var(--purple-500);
+                opacity: 0;
+                animation: searchPulse 1.5s ease-out infinite;
+            }
+
+            @keyframes searchPulse {
+                0% {
+                    transform: scale(0.8);
+                    opacity: 0.8;
+                }
+
+                50% {
+                    transform: scale(1.2);
+                    opacity: 0.3;
+                }
+
+                100% {
+                    transform: scale(1.5);
+                    opacity: 0;
+                }
+            }
+
+            /* Active state */
+            .category-header .icon-btn:last-child:active::before {
+                animation: none;
+                opacity: 0;
+            }
+        }
+
+        /* Premium Header Gradient (Mobile) */
+        @media (max-width: 1023px) {
+            .category-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg,
+                        transparent,
+                        rgba(124, 77, 255, 0.3) 20%,
+                        rgba(124, 77, 255, 0.5) 50%,
+                        rgba(124, 77, 255, 0.3) 80%,
+                        transparent);
+            }
+        }
+
+        /* ============================================
+   FIX MOBILE VIEW - REMOVE BOX SPACE & SHOW PRICES
+   ============================================ */
+
+        @media (max-width: 1023px) {
+
+            /* Remove any unwanted spacing/boxes */
+            #categoryDetailScreen {
+                padding: 0;
+                margin: 0;
+                background: var(--bg-primary);
+            }
+
+            /* Ensure header has no extra space */
+            .category-header {
+                margin: 0;
+                padding: 16px 20px;
+            }
+
+            /* Fix product card to show full content */
+            #categoryDetailGrid .product-card {
+                display: flex;
+                flex-direction: column;
+                background: var(--bg-secondary);
+                border-radius: var(--radius-lg);
+                overflow: hidden;
+                box-shadow: var(--shadow-sm);
+                height: auto;
+                /* Allow natural height */
+            }
+
+            /* Product image - proper aspect ratio */
+            #categoryDetailGrid .product-img {
+                position: relative;
+                aspect-ratio: 3/4;
+                width: 100%;
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            #categoryDetailGrid .product-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* Product info - always visible, scrollable if needed */
+            #categoryDetailGrid .product-info {
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                flex: 1;
+                min-height: fit-content;
+            }
+
+            /* Product name - wrap if long */
+            #categoryDetailGrid .product-name {
+                font-size: 13px;
+                font-weight: 600;
+                line-height: 1.3;
+                color: var(--text-primary);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                word-wrap: break-word;
+            }
+
+            /* Product price - always visible */
+            #categoryDetailGrid .product-price {
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--purple-600);
+                display: flex !important;
+                align-items: baseline;
+                gap: 6px;
+                margin-top: auto;
+            }
+
+            #categoryDetailGrid .product-original-price {
+                font-size: 12px;
+                color: var(--text-muted);
+                text-decoration: line-through;
+            }
+
+            /* Grid container - proper scrolling */
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 20px 16px calc(var(--bottom-nav-height) + 32px);
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                min-height: 0;
+                /* Important for proper scrolling */
+            }
+
+            /* Remove any conflicting overflow settings */
+            #categoryDetailScreen>div:last-child {
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Tablets - 3 column grid with more space */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #categoryDetailGrid .product-card {
+                height: auto;
+            }
+
+            #categoryDetailGrid .product-name {
+                font-size: 14px;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+            }
+
+            #categoryDetailGrid .product-price {
+                font-size: 16px;
+            }
+
+            #categoryDetailGrid .product-original-price {
+                font-size: 13px;
+            }
+
+            #categoryDetailScreen #categoryDetailGrid {
+                padding: 32px calc(var(--bottom-nav-height) + 40px);
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+        }
+
+        /* ============================================
+           SEARCH RESULTS STYLING
+           ============================================ */
+        #searchResults {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        #searchResults .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #searchResults .product-card:active {
+            transform: scale(0.98);
+        }
+
+        #searchResults .product-img {
+            aspect-ratio: 3/4;
+            width: 100%;
+            position: relative;
+        }
+
+        #searchResults .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #searchResults .product-info {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #searchResults .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #searchResults .product-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--purple-600);
+            display: flex !important;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        #searchResults .product-original-price {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        /* List view for search results (optional alternative) */
+        /* Currently using grid to match product cards */
+
+        @media (max-width: 600px) {
+            #searchResults {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+
+            #searchResults .product-name {
+                font-size: 13px;
+            }
+
+            #searchResults .product-price {
+                font-size: 14px;
+            }
+        }
+
+        /* ============================================
+           NEW UI IMPROVEMENTS (Auth, Dropdowns, Animations)
+           ============================================ */
+
+        /* 1. Global Dropdown Styling */
+        select.form-input,
+        select {
+            /* Redesigned Pill Dropdown */
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            padding: 12px 20px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%234a0e4e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 48px !important;
+            cursor: pointer;
+            background-color: #ffffff;
+            /* Solid White */
+            border: 1px solid #e0e0e0;
+            border-radius: var(--radius-pill);
+            /* Full Pill Shape */
+            color: var(--theme-primary-dark);
+            /* Deep Purple */
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.4s var(--ease-lux);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: var(--theme-primary);
+            box-shadow: var(--shadow-focus);
+            transform: translateY(-1px);
+        }
+
+        /* Update option styling for consistency */
+        select option {
+            background-color: #ffffff;
+            color: #4a0e4e;
+            padding: 10px;
+        }
+
+        /* Slower Global Transitions */
+        * {
+            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* 2. Smooth Auth Switcher */
+        .auth-tabs {
+            position: relative;
+            background: rgba(124, 77, 255, 0.08);
+            /* Slightly darker bg for contrast */
+            padding: 4px;
+            border-radius: 100px;
+            border: 1px solid rgba(124, 77, 255, 0.15);
+            display: flex;
+            isolation: isolate;
+        }
+
+        .auth-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-radius: 100px;
+            padding: 12px;
+            /* Taller touch target */
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.6s ease;
+            /* Slower */
+            z-index: 2;
+        }
+
+        .auth-tab.active {
+            background: transparent;
+            color: var(--purple-700);
+            box-shadow: none;
+        }
+
+        .auth-tab-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            bottom: 4px;
+            width: calc(50% - 4px);
+            background: white;
+            border-radius: 100px;
+            box-shadow: 0 4px 12px rgba(124, 77, 255, 0.15);
+            /* More purple shadow */
+            z-index: 1;
+            transition: transform 0.6s cubic-bezier(0.2, 0.0, 0.2, 1);
+            /* Luxurious slow slide */
+            transform: translateX(0);
+        }
+
+        /* State for second tab */
+        .auth-tabs.signup-active .auth-tab-slider {
+            transform: translateX(100%);
+        }
+
+        /* 3. Size Chart Perfection */
+        .size-chart-table table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .size-chart-table th,
+        .size-chart-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .size-chart-table th {
+            background: rgba(124, 77, 255, 0.05);
+            color: var(--purple-900);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .size-chart-table td {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .size-chart-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .size-chart-table tr:hover td {
+            background: rgba(124, 77, 255, 0.02);
+        }
+
+        /* 4. Bottom Nav Slide Indicator */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(124, 77, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            /* Perfect spacing */
+            align-items: center;
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+            z-index: 100;
+            transition: transform 0.6s cubic-bezier(0.2, 0.0, 0.2, 1);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--purple-600);
+            border-radius: 0 0 4px 4px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 0;
+            /* JS will set this */
+            box-shadow: 0 2px 8px rgba(124, 77, 255, 0.4);
+        }
+
+        .nav-item.active {
+            color: var(--purple-700);
+        }
+
+        /* Remove old indicator if any (e.g. ::after) */
+        .nav-item.active::after {
+            display: none;
+        }
+
+        /* 5. Logout Dissolve */
+        @keyframes dissolveOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.05);
+                filter: blur(10px);
+            }
+        }
+
+        .dissolve-out {
+            animation: dissolveOut 0.8s forwards ease-in-out;
+            pointer-events: none;
+        }
+
+        /* 6. Section Reordering & Layout */
+        .product-features-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* WOW FACTOR ANIMATIONS */
+        @keyframes float-gentle {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-10px) scale(1.05);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 4px 25px rgba(124, 77, 255, 0.6);
+            }
+
+            100% {
+                box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3);
+            }
+        }
+
+        /* 1. Alive Hero Cards */
+        .category-card-new .category-card-img {
+            animation: float-gentle 8s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        /* Stagger animations so they don't all move in sync */
+        .category-card-new:nth-child(2) .category-card-img {
+            animation-delay: 1.5s;
+        }
+
+        .category-card-new:nth-child(3) .category-card-img {
+            animation-delay: 3s;
+        }
+
+        .category-card-new:nth-child(4) .category-card-img {
+            animation-delay: 0.5s;
+        }
+
+        .category-card-new:nth-child(5) .category-card-img {
+            animation-delay: 2s;
+        }
+
+        .category-card-new:nth-child(6) .category-card-img {
+            animation-delay: 4s;
+        }
+
+        /* 2. Primary Button Pulse */
+        .btn-primary {
+            animation: pulse-glow 3s infinite;
+        }
+
+        /* 3. Magnetic Hover Lift (Enhanced) */
+        .product-card {
+            transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02) !important;
+            box-shadow: 0 20px 40px rgba(124, 77, 255, 0.15) !important;
+        }
+
+        /* 4. Entrance Fade Up (On Load) */
+        @keyframes fadeUpEnt {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-card-new {
+            opacity: 0;
+            /* Star hidden */
+            animation: fadeUpEnt 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .category-card-new:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .category-card-new:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .category-card-new:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .category-card-new:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .category-card-new:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .category-card-new:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* FIX: Categories Screen should not block bottom nav */
+        #categoriesScreen {
+            display: block;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(var(--bottom-nav-height) + 20px);
+            /* Add padding for nav */
+            min-height: 100vh;
+        }
+
+        #categoriesScreen.screen.active {
+            z-index: 101;
+            /* Lower than bottom nav */
+        }
+
+        /* Ensure centered container doesn't overflow */
+        .centered-category-container {
+            width: 100%;
+            min-height: calc(100vh - var(--bottom-nav-height));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px calc(var(--bottom-nav-height) + 40px);
+            box-sizing: border-box;
+        }
+
+        /* CRITICAL: Bottom nav must be above all screens */
+        .bottom-nav {
+            z-index: 1000 !important;
+            /* Force highest priority */
+            pointer-events: auto !important;
+        }
+
+        /* Ensure nav items are clickable */
+        .nav-item {
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 1000;
+        }
+
+        /* Screen z-index hierarchy fix */
+        .screen {
+            z-index: 10;
+        }
+
+        .screen.active {
+            z-index: 101;
+            /* Below bottom nav */
+        }
+
+        /* Exception for modals/overlays that should be above nav */
+        .product-detail,
+        .checkout-screen,
+        .search-overlay,
+        .cart-sidebar,
+        .modal-overlay,
+        .payment-modal,
+        .dashboard-modal,
+        .contact-modal {
+            z-index: 5000 !important;
+            /* Above nav only for true overlays */
+        }
+
+        /* Category cards should not interfere with nav */
+        .category-card-new {
+            position: relative;
+            z-index: 1;
+            /* Low z-index */
+            pointer-events: auto;
+            /* But clickable */
+        }
+
+        .simple-category-grid {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Royal Purple Animated Background -->
+    <div class="royal-bg">
+        <div class="gradient-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="particles" id="particles"></div>
+    </div>
+    <div id="intro" class="screen active">
+        <div class="intro-bg"></div>
+        <svg class="intro-threads" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="threadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d4af37" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#d4af37" />
+                    <stop offset="100%" stop-color="#d4af37" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+            <path class="thread-path" d="M0,20 Q25,25 50,20 T100,20" style="animation-delay:0s" />
+            <path class="thread-path" d="M0,50 Q25,45 50,50 T100,50" style="animation-delay:0.3s" />
+            <path class="thread-path" d="M0,80 Q25,75 50,80 T100,80" style="animation-delay:0.6s" />
+        </svg>
+        <div class="logo-container">
+            <div class="logo-text cursive-writing">
+                <svg viewBox="0 0 450 200" class="writing-svg">
+                    <defs>
+                        <mask id="textMask">
+                            <path class="mask-stroke" d="M 20,110 L 430,110" />
+                        </mask>
+                    </defs>
+                    <text x="50%" y="125" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="110"
+                        fill="#d4af37" mask="url(#textMask)">Izhai</text>
+                </svg>
+            </div>
+            <p class="tagline">Draped in Elegance</p>
+            <div class="intro-ornament"></div>
+        </div>
+        <div class="butterfly">
+            <svg viewBox="0 0 40 40" fill="none">
+                <path d="M20,20 Q15,10 10,15 Q5,20 10,25 Q15,30 20,20 Z" fill="#d4af37" opacity="0.8" />
+                <path d="M20,20 Q25,10 30,15 Q35,20 30,25 Q25,30 20,20 Z" fill="#b8860b" opacity="0.8" />
+                <circle cx="20" cy="20" r="2" fill="#4a2c6f" />
+            </svg>
+        </div>
+    </div>
+    <div id="gateway" class="screen">
+        <div class="gateway-content">
+            <div class="gateway-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+            <h1 class="gateway-title heading">Welcome to Izhai</h1>
+            <p class="gateway-subtitle">Discover timeless elegance with our handcrafted collection of sarees and kurtis
+            </p>
+            <button class="btn btn-primary ripple" onclick="App.showAuth()">Explore Collection</button>
+        </div>
+    </div>
+    <div id="auth" class="screen">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">Izhai</div>
+                </div>
+                <div class="auth-tabs" id="authTabsContainer">
+                    <div class="auth-tab-slider"></div>
+                    <button class="auth-tab active" data-tab="login">Sign In</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+                <form id="loginForm" onsubmit="App.handleAuth(event)">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder=" " required>
+                        <label class="form-label">Email or Username</label>
+                    </div>
+                    <div class="form-group" style="position:relative">
+                        <input type="password" id="loginPass" class="form-input" placeholder=" " required>
+                        <label class="form-label">Password</label>
+                        <button type="button" onclick="App.togglePassword('loginPass')"
+                            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-secondary)">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none"
+                                class="eye-icon">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="submit" class="form-btn ripple">Continue</button>
+                </form>
+                <form id="signupForm" class="hidden" onsubmit="App.handleAuth(event)">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder=" " required>
+                        <label class="form-label">Full Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-input" placeholder=" " required>
+                        <label class="form-label">Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" class="form-input" placeholder=" " required>
+                        <label class="form-label">Phone</label>
+                    </div>
+                    <div class="form-group" style="position:relative">
+                        <input type="password" id="signupPass" class="form-input" placeholder=" " required>
+                        <label class="form-label">Password</label>
+                        <button type="button" onclick="App.togglePassword('signupPass')"
+                            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-secondary)">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none"
+                                class="eye-icon">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="submit" class="form-btn ripple">Create Account</button>
+                </form>
+                <div class="auth-divider">or</div>
+                <button class="guest-btn" onclick="App.enterApp()">Continue as Guest</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const NavigationManager = {
+            stack: ['intro'],
+            stateStack: [{}], // Parallel stack to store state for each history entry
+
+            getCurrentScreen() {
+                return this.stack[this.stack.length - 1];
+            },
+
+            isOnScreen(screenId) {
+                return this.getCurrentScreen() === screenId;
+            },
+
+            push(screenId, state = {}) {
+                // Close overlays before navigation
+                this.closeAllOverlays();
+
+                const current = this.getCurrentScreen();
+                const isOverlay = screenId === 'productDetail'; // Define overlay screens
+
+                // Hide current screen UNLESS we are pushing an overlay
+                if (current) {
+                    const el = document.getElementById(current);
+                    if (el) {
+                        if (!isOverlay) {
+                            el.classList.remove('active');
+                        }
+                        // Clean up any stale animation classes on current
+                        el.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                    }
+                }
+
+                // Add to stack
+                this.stack.push(screenId);
+                this.stateStack.push(state);
+
+                // Show new screen
+                const newEl = document.getElementById(screenId);
+                if (newEl) {
+                    newEl.classList.add('active');
+
+                    // Always animate overlay entry
+                    // Force a more aggressive reset for animations, using requestAnimationFrame
+                    if (isOverlay || (state && state.animate)) {
+                        newEl.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                        newEl.classList.remove('active'); // Temporarily hide to ensure "entry" feel
+
+                        // Force browser to acknowledge the removal
+                        void newEl.offsetWidth;
+
+                        requestAnimationFrame(() => {
+                            newEl.classList.add('active');
+                            newEl.classList.add('slide-in-right');
+                        });
+                    }
+                }
+
+                this.updateBottomNav();
+                window.history.pushState({ screenId, state }, '', `#${screenId}`);
+            },
+
+            pop() {
+                if (this.stack.length <= 1) return false;
+
+                this.closeAllOverlays();
+
+                const current = this.stack.pop();
+                const currentState = this.stateStack.pop();
+
+                const previous = this.getCurrentScreen(); // New top
+                const previousState = this.stateStack[this.stateStack.length - 1];
+
+                const currEl = document.getElementById(current);
+                const prevEl = document.getElementById(previous);
+
+                // 1. Logic for Internal Product Navigation (Back to previous Product)
+                // If popping ProductDetail to reveal ProductDetail (singleton reuse)
+                const isInternalBack = (current === 'productDetail' && previous === 'productDetail');
+
+                if (isInternalBack && currEl) {
+                    // Restore Content FIRST
+                    if (previousState && previousState.productId) {
+                        App.renderProductDetail(previousState.productId, false);
+                    }
+                    // Apply Back Animation (Enter from Left)
+                    currEl.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                    void currEl.offsetWidth;
+
+                    requestAnimationFrame(() => {
+                        currEl.classList.add('slide-in-left');
+                    });
+
+                    this.updateBottomNav();
+                    return true;
+                }
+
+                // 2. Logic for Exit Animation (Product -> Home)
+                // If current screen is an overlay type, we want to animate it OUT
+                const isOverlayExit = (current === 'productDetail');
+
+                if (isOverlayExit && currEl) {
+                    // Ensure previous is visible BEHIND the sliding out screen
+                    if (prevEl) prevEl.classList.add('active');
+
+                    // Animate Out
+                    currEl.classList.remove('slide-in-right', 'slide-in-left');
+                    currEl.classList.add('slide-out-right');
+
+                    // Allow time for animation before hiding
+                    setTimeout(() => {
+                        currEl.classList.remove('active', 'slide-out-right');
+
+                        // Restore state if needed (e.g. scroll position, though tricky with singletons)
+                        if (previous === 'categoryDetailScreen' && previousState) {
+                            // potential restore logic
+                        }
+                    }, 350); // Match CSS duration
+
+                    // If returning to search...
+                    this.checkReturnToSearch(previous);
+                    this.updateBottomNav();
+                    return true;
+                }
+
+                // 3. Standard Navigation (No fancy animation required or immediate switch)
+                if (currEl) {
+                    currEl.classList.remove('active', 'slide-in-right', 'slide-in-left');
+                }
+
+                if (prevEl) {
+                    prevEl.classList.add('active');
+                }
+
+                // Clear category filter if leaving category detail screen
+                if (current === 'categoryDetailScreen') {
+                    App.currentCategoryFilter = null;
+                }
+
+                this.checkReturnToSearch(previous);
+                this.updateBottomNav();
+
+                return true;
+            },
+
+            checkReturnToSearch(previous) {
+                if (previous === 'app' && App.returnToSearch) {
+                    setTimeout(() => {
+                        const searchOverlay = document.getElementById('searchOverlay');
+                        const searchInput = document.getElementById('searchInput');
+
+                        if (searchOverlay && searchInput) {
+                            searchOverlay.classList.add('active');
+                            searchInput.value = App.lastSearchQuery || '';
+                            App.handleSearch(App.lastSearchQuery || '');
+                            searchInput.focus();
+                        }
+
+                        App.returnToSearch = false;
+                        App.lastSearchQuery = '';
+                    }, 100);
+                }
+            },
+
+            replace(screenId, state = {}) {
+                // Close overlays
+                this.closeAllOverlays();
+
+                // Replace current screen
+                const current = this.stack.pop();
+                this.stateStack.pop();
+
+                const currEl = document.getElementById(current);
+                if (currEl) {
+                    currEl.classList.remove('active', 'slide-in-right', 'slide-in-left', 'slide-out-right');
+                }
+
+                this.stack.push(screenId);
+                this.stateStack.push(state);
+
+                const newEl = document.getElementById(screenId);
+                if (newEl) {
+                    newEl.classList.add('active');
+                }
+
+                this.updateBottomNav();
+            },
+
+            reset(screenId = 'app') {
+                // Close everything
+                this.closeAllOverlays();
+
+                // Clear stack
+                this.stack.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.remove('active', 'slide-in-right', 'slide-in-left', 'slide-out-right');
+                    }
+                });
+                this.stack = [screenId];
+                this.stateStack = [{}];
+
+                // Show new root
+                const rootEl = document.getElementById(screenId);
+                if (rootEl) {
+                    rootEl.classList.add('active');
+                }
+                this.updateBottomNav();
+            },
+
+            getCurrentScreen() {
+                return this.stack[this.stack.length - 1];
+            },
+
+            isOnScreen(screenId) {
+                return this.getCurrentScreen() === screenId;
+            },
+
+            closeAllOverlays() {
+                // Close cart
+                const sidebar = document.getElementById('cartSidebar');
+                const overlay = document.getElementById('cartOverlay');
+                if (sidebar) sidebar.classList.remove('active');
+                if (overlay) overlay.classList.remove('active');
+
+                // Close search
+                const search = document.getElementById('searchOverlay');
+                if (search) search.classList.remove('active');
+
+                // Close modals
+                const payModal = document.getElementById('paymentModal');
+                const dashModal = document.getElementById('dashboardModal');
+                if (payModal) payModal.classList.remove('active');
+                if (dashModal) dashModal.classList.remove('active');
+            },
+
+            updateBottomNav() {
+                const current = this.getCurrentScreen();
+                const nav = document.querySelector('.bottom-nav');
+                const indicator = document.getElementById('navIndicator');
+
+                // Show/hide nav based on screen
+                const noNavScreens = ['intro', 'gateway', 'auth', 'checkoutScreen', 'addProductScreen'];
+                if (noNavScreens.includes(current)) {
+                    nav?.classList.add('force-hidden');
+                } else {
+                    nav?.classList.remove('force-hidden');
+                }
+
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Map screens to nav items
+                const navMap = {
+                    'app': 'home',
+                    'categoriesScreen': 'categories',
+                    'profileScreen': 'profile'
+                };
+
+                const activeNav = navMap[current];
+                if (activeNav) {
+                    const navItem = document.querySelector(`.nav-item[data-nav="${activeNav}"]`);
+                    if (navItem) {
+                        navItem.classList.add('active');
+
+                        // Slide Indicator
+                        if (indicator) {
+                            // Use offsetLeft and offsetWidth for sliding effect
+                            indicator.style.width = `${navItem.offsetWidth}px`;
+                            indicator.style.transform = `translateX(${navItem.offsetLeft}px)`;
+                        }
+                    }
+                }
+            }
+        };
+
+        const GestureManager = {
+            startX: 0,
+            startY: 0,
+            threshold: 100,
+
+            init() {
+                document.addEventListener('touchstart', (e) => {
+                    this.startX = e.touches[0].clientX;
+                    this.startY = e.touches[0].clientY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+
+                    const diffX = endX - this.startX;
+                    const diffY = Math.abs(endY - this.startY);
+
+                    // Swipe back gesture
+                    if (diffX > this.threshold && diffY < 100) {
+                        const current = NavigationManager.getCurrentScreen();
+                        const canSwipeBack = ['productDetail', 'categoriesScreen', 'profileScreen', 'addProductScreen', 'checkoutScreen'];
+                        if (canSwipeBack.includes(current)) {
+                            NavigationManager.pop();
+                        }
+                    }
+                }, { passive: true });
+            }
+        };
+
+        const App = {
+            currentScreen: 'intro',
+            currentCategoryFilter: null,
+            user: null,
+            cart: [],
+            wishlist: [],
+            orders: [],
+            selectedProduct: null,
+            selectedSize: 'M',
+            returnToSearch: false,
+            lastSearchQuery: '',
+            selectedRating: 0,
+            currentSizeChartTab: 'saree',
+            currentProductPhotoIndex: 0,
+            reviews: {
+                1: [
+                    { author: 'Priya K', rating: 5, title: 'Perfect for weddings!', text: 'The silk quality is exceptional. Got so many compliments at the wedding!', date: '2 days ago' },
+                    { author: 'Meera S', rating: 4, title: 'Beautiful color', text: 'The purple shade is gorgeous. Very elegant and traditional.', date: '1 week ago' }
+                ],
+                2: [
+                    { author: 'Radha M', rating: 5, title: 'Worth every penny', text: 'Authentic Banarasi work. Stunning craftsmanship!', date: '3 days ago' }
+                ],
+                3: [
+                    { author: 'Anjali R', rating: 5, title: 'Comfortable and stylish', text: 'Perfect for festivals. The cotton is breathable and the fit is great!', date: '5 days ago' }
+                ]
+            },
+            sizeCharts: {
+                saree: {
+                    headers: ['Size', 'Blouse Bust', 'Blouse Waist', 'Blouse Length', 'Saree Length'],
+                    rows: [
+                        ['S', '32-34"', '26-28"', '14-15"', '5.5m'],
+                        ['M', '36-38"', '30-32"', '15-16"', '5.5m'],
+                        ['L', '40-42"', '34-36"', '16-17"', '6.3m'],
+                        ['XL', '44-46"', '38-40"', '17-18"', '6.3m']
+                    ]
+                },
+                kurti: {
+                    headers: ['Size', 'Bust', 'Waist', 'Hip', 'Length'],
+                    rows: [
+                        ['S', '32-34"', '26-28"', '36-38"', '42"'],
+                        ['M', '36-38"', '30-32"', '40-42"', '44"'],
+                        ['L', '40-42"', '34-36"', '44-46"', '46"'],
+                        ['XL', '44-46"', '38-40"', '48-50"', '48"']
+                    ]
+                }
+            },
+            products: [
+                // SAREES - SILK & TRADITIONAL
+                { id: 1, name: 'Royal Purple Silk Saree', price: 8999, originalPrice: 12999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%237c4dff"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%234a2c6f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g1)"%3E%3C/rect%3E%3Cpath d="M0 200 Q75 180 150 200 T300 200" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="40"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%237c4dff"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%234a2c6f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g1)"%3E%3C/rect%3E%3Cpath d="M0 200 Q75 180 150 200 T300 200" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="40"%3E%3C/path%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%237c4dff"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3EAngle 2%3C/text%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%234a2c6f"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3EDetail View%3C/text%3E%3C/svg%3E'], description: 'Royal Purple Silk Saree with intricate gold zari work. Perfect for weddings and grand occasions.' },
+                { id: 2, name: 'Golden Banarasi Silk', price: 15999, originalPrice: 19999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23b8860b"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g2)"%3E%3C/rect%3E%3Cpath d="M50 0 L50 400 M100 0 L100 400 M150 0 L150 400 M200 0 L200 400 M250 0 L250 400" stroke="rgba(255,255,255,0.15)" stroke-width="2"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23b8860b"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g2)"%3E%3C/rect%3E%3Cpath d="M50 0 L50 400 M100 0 L100 400 M150 0 L150 400 M200 0 L200 400 M250 0 L250 400" stroke="rgba(255,255,255,0.15)" stroke-width="2"%3E%3C/path%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23d4af37"/%3E%3Ctext x="50%25" y="50%25" fill="black" font-size="20" text-anchor="middle" dy=".3em"%3EGolden View%3C/text%3E%3C/svg%3E'], description: 'Traditional Golden Banarasi Silk Saree featuring classic motifs and a rich border.' },
+                { id: 4, name: 'Pink Designer Saree', price: 12999, originalPrice: 16999, category: 'saree', fabric: 'silk', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g4" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23ec407a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g4)"%3E%3C/rect%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g4" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23ec407a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g4)"%3E%3C/rect%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23ec407a"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3ELose Shot%3C/text%3E%3C/svg%3E'], description: 'Contemporary Pink Designer Saree with modern patterns and a sleek finish.' },
+                { id: 8, name: 'Maroon Kanjivaram', price: 24999, originalPrice: 29999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g8" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23b71c1c"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g8)"%3E%3C/rect%3E%3Cpath d="M0 100 L300 100 M0 200 L300 200 M0 300 L300 300" stroke="%23d4af37" stroke-width="3"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g8" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23b71c1c"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g8)"%3E%3C/rect%3E%3Cpath d="M0 100 L300 100 M0 200 L300 200 M0 300 L300 300" stroke="%23d4af37" stroke-width="3"%3E%3C/path%3E%3C/svg%3E'], description: 'Exquisite Maroon Kanjivaram Saree, a masterpiece of traditional weaving.' },
+
+                // SAREES - LIGHTWEIGHT
+                { id: 13, name: 'Sky Blue Georgette', price: 5499, originalPrice: 7999, category: 'saree', fabric: 'georgette', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%2387CEEB"/%3E%3Ccircle cx="50" cy="50" r="20" fill="rgba(255,255,255,0.3)"/%3E%3Ccircle cx="250" cy="350" r="30" fill="rgba(255,255,255,0.3)"/%3E%3C/svg%3E', description: 'Lightweight flowy Georgette saree in sky blue. Easy to drape and perfect for parties.' },
+                { id: 14, name: 'Floral Chiffon Saree', price: 3999, originalPrice: 5999, category: 'saree', fabric: 'chiffon', occasion: 'casual', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23FFB7C5"/%3E%3Cpath d="M0 0 L300 400 M300 0 L0 400" stroke="white" stroke-width="2" opacity="0.5"/%3E%3C/svg%3E', description: 'Delicate Chiffon saree with floral prints. Ideal for summer outings.' },
+
+                // KURTIS & ANARKALIS
+                { id: 3, name: 'Teal Anarkali Kurti', price: 3499, originalPrice: 4999, category: 'kurti', fabric: 'cotton', occasion: 'festive', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g3" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%2326a69a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23004d40"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g3)"%3E%3C/rect%3E%3Ccircle cx="150" cy="100" r="40" fill="rgba(255,255,255,0.1)"%3E%3C/circle%3E%3C/svg%3E', description: 'Elegant Teal Anarkali Kurti made from breathable cotton, ideal for festive wear.' },
+                { id: 5, name: 'Emerald Cotton Kurti', price: 2499, originalPrice: 3499, category: 'kurti', fabric: 'cotton', occasion: 'casual', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g5" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%232e7d32"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%231b5e20"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g5)"%3E%3C/rect%3E%3C/svg%3E', description: 'Comfortable Emerald Cotton Kurti, perfect for daily wear and casual outings.' },
+                { id: 7, name: 'Navy Silk Kurti', price: 4999, originalPrice: 6999, category: 'kurti', fabric: 'silk', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g7" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%231a237e"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23000051"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g7)"%3E%3C/rect%3E%3C/svg%3E', description: 'Luxurious Navy Silk Kurti with hand-embroidered neckline.' },
+                { id: 15, name: 'White Linen Kurti', price: 2999, originalPrice: 4499, category: 'kurti', fabric: 'linen', occasion: 'casual', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23F5F5F5"/%3E%3Cline x1="150" y1="50" x2="150" y2="400" stroke="%23ddd" stroke-width="2"/%3E%3C/svg%3E', description: 'Pure white Linen Kurti for summer elegance.' },
+
+                // COTTON & CHANDERI
+                { id: 6, name: 'Ivory Chanderi Saree', price: 7999, originalPrice: 10999, category: 'saree', fabric: 'cotton', occasion: 'festive', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g6" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23f5f5dc"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g6)"%3E%3C/rect%3E%3C/svg%3E', description: 'Sophisticated Ivory Chanderi Saree with subtle gold detailing.' },
+                { id: 16, name: 'Handblock Cotton Saree', price: 3200, originalPrice: 4500, category: 'saree', fabric: 'cotton', occasion: 'casual', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23FFE4E1"/%3E%3Ccircle cx="50" cy="50" r="10" fill="%23CD5C5C"/%3E%3Ccircle cx="150" cy="150" r="10" fill="%23CD5C5C"/%3E%3Ccircle cx="250" cy="250" r="10" fill="%23CD5C5C"/%3E%3C/svg%3E', description: 'Traditional handblock printed cotton saree from Jaipur.' }
+            ],
+
+            init() {
+                // Handle browser back/forward
+                window.addEventListener('popstate', (e) => {
+                    if (e.state?.screenId) {
+                        NavigationManager.replace(e.state.screenId);
+                    } else {
+                        NavigationManager.pop();
+                    }
+                });
+
+                // ESC Key Handler
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const modal = document.getElementById('dashboardModal');
+                        const searchOverlay = document.getElementById('searchOverlay');
+                        const cartSidebar = document.getElementById('cartSidebar');
+
+                        if (modal?.classList.contains('active')) {
+                            this.closeDashboardModal();
+                        } else if (searchOverlay?.classList.contains('active')) {
+                            this.toggleSearch();
+                        } else if (cartSidebar?.classList.contains('active')) {
+                            this.toggleCart();
+                        } else {
+                            NavigationManager.pop();
+                        }
+                    }
+                });
+
+                // Initial navigation
+                setTimeout(() => NavigationManager.push('gateway'), 3500);
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.addEventListener('click', () => this.switchAuthTab(tab.dataset.tab));
+                });
+                this.renderProducts();
+                this.toggleAdminUI(false);
+                this.updateCartUI();
+                this.updateProfileUI();
+                this.initSlider();
+                GestureManager.init();
+            },
+
+            showAuth() {
+                NavigationManager.push('auth');
+            },
+
+            enterApp() {
+                window.location.href = 'home.html';
+            },
+
+            switchAuthTab(tab) {
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+                // Animate Slider
+                const container = document.getElementById('authTabsContainer');
+                if (container) {
+                    if (tab === 'signup') container.classList.add('signup-active');
+                    else container.classList.remove('signup-active');
+                }
+
+                document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+                document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
+            },
+
+            async handleAuth(e) {
+                e.preventDefault();
+                const form = e.target;
+                const isLogin = form.id === 'loginForm';
+
+                if (isLogin) {
+                    const emailOrUser = form.querySelector('input[type="email"], input[type="text"]').value;
+                    const password = form.querySelector('input[type="password"]').value;
+
+                    // Check credentials
+                    const isValidUser = (emailOrUser.toLowerCase() === 'anitha8888@gmail.com' || emailOrUser === 'Anitha');
+                    const isValidPass = (password === 'Tejadiya@711');
+
+                    if (isValidUser && isValidPass) {
+                        this.user = {
+                            name: 'Anitha',
+                            email: 'anitha8888@gmail.com',
+                            isAdmin: true
+                        };
+                        alert('Welcome Admin Anitha!');
+                        this.enterApp();
+                    } else {
+                        alert('Invalid Credentials! Please try again.');
+                    }
+                } else {
+                    const name = form.querySelector('input[type="text"]').value;
+                    const email = form.querySelector('input[type="email"]').value;
+                    this.user = { name, email, isAdmin: false };
+                    this.enterApp();
+                }
+            },
+
+
+            toggleAdminUI(isAdmin) {
+                const adminBtns = document.querySelectorAll('.admin-only');
+                adminBtns.forEach(btn => {
+                    btn.style.display = isAdmin ? 'flex' : 'none';
+                });
+            },
+
+            updateProfileUI() {
+                const name = this.user?.name || 'Guest User';
+                const email = this.user?.email || 'guest@izhai.com';
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('profileEmail').textContent = email;
+                document.getElementById('profileAvatar').textContent = name.substring(0, 2).toUpperCase();
+
+                // Update Stats
+                const statOrders = document.getElementById('statOrders');
+                if (statOrders) statOrders.textContent = this.orders.length;
+
+                const statWishlist = document.getElementById('statWishlist');
+                if (statWishlist) statWishlist.textContent = this.wishlist.length;
+            },
+
+            renderProducts(filter = 'all') {
+                const grid = document.getElementById('productGrid');
+                if (!grid) return;
+
+                let filtered = this.products;
+
+                if (filter !== 'all') {
+                    filtered = this.products.filter(p =>
+                        p.category === filter ||
+                        p.fabric === filter ||
+                        (p.occasion && p.occasion === filter)
+                    );
+                }
+
+                // Update Section Title
+                const sectionTitle = document.querySelector('.section-title');
+                if (sectionTitle) {
+                    if (filter === 'all') sectionTitle.textContent = 'Featured Collection';
+                    else sectionTitle.textContent = filter.charAt(0).toUpperCase() + filter.slice(1) + ' Collection';
+                }
+
+                grid.innerHTML = filtered.map((p, idx) => `
+            <div class="product-card" style="--idx: ${idx}; animation: fadeInUp 0.6s var(--ease-spring) backwards; animation-delay: ${idx * 0.05}s" onclick="App.showProduct(${p.id})">
+                <div class="product-img">
+                    <img src="${p.image}" alt="${p.name}">
+                    <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" onclick="event.stopPropagation(); App.toggleWishlist(${p.id})">
+                        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-price">₹${p.price.toLocaleString('en-IN')}<span class="product-original-price">₹${p.originalPrice.toLocaleString('en-IN')}</span></div>
+                </div>
+            </div>
+        `).join('');
+            },
+
+            openCategory(cat) {
+                const titleMap = {
+                    'saree': 'Sarees',
+                    'kurti': 'Kurtis',
+                    'wedding': 'Bridal',
+                    'silk': 'Pure Silk',
+                    'cotton': 'Cotton',
+                    'party': 'Party Wear',
+                    'all': 'All Collections'
+                };
+
+                // Set the current category filter
+                this.currentCategoryFilter = cat;
+
+                // Update Title
+                const titleEl = document.getElementById('categoryDetailTitle');
+                if (titleEl) titleEl.textContent = titleMap[cat] || 'Collection';
+
+                // Navigate
+                NavigationManager.push('categoryDetailScreen');
+
+                // Reset scroll position
+                const screen = document.getElementById('categoryDetailScreen');
+                if (screen) screen.scrollTop = 0;
+
+                // Render Products in Detail Grid
+                const grid = document.getElementById('categoryDetailGrid');
+                if (grid) {
+                    const filtered = this.products.filter(p =>
+                        p.category === cat || p.fabric === cat || p.occasion === cat
+                    );
+
+                    if (filtered.length === 0) {
+                        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-secondary)">No products found in this category.</div>';
+                        return;
+                    }
+
+                    grid.innerHTML = filtered.map((p, idx) => `
+                        <div class="product-card" style="--idx: ${idx}; animation: fadeInUp 0.6s var(--ease-spring) backwards; animation-delay: ${idx * 0.05}s" onclick="App.showProduct(${p.id})">
+                             <div class="product-img">
+                                <img src="${p.image}" alt="${p.name}">
+                                <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" onclick="event.stopPropagation(); App.toggleWishlist(${p.id})">
+                                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                </button>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">${p.name}</div>
+                                <div class="product-price">₹${p.price.toLocaleString('en-IN')}<span class="product-original-price">₹${p.originalPrice.toLocaleString('en-IN')}</span></div>
+                            </div>
+                        </div>
+                     `).join('');
+                }
+            },
+
+            filterCategory(cat) {
+                this.currentCategory = cat;
+
+                // Update UI State for both new glass chips and old tabs
+                document.querySelectorAll('.cat-tab, .glass-chip').forEach(t => {
+                    t.classList.remove('active');
+                    // Match based on data-cat or onclick content
+                    if (t.dataset.cat === cat || t.getAttribute('onclick')?.includes(`'${cat}'`)) {
+                        t.classList.add('active');
+                    }
+                });
+
+                this.renderProducts(cat);
+                this.pendingScrollToGrid = true;
+            },
+
+            filterCategoryView(cat) {
+                // Handler for Categories Screen chips
+                this.filterCategory(cat);
+                this.switchNav('home');
+            },
+
+            switchNav(nav) {
+                const screenMap = {
+                    'home': 'app',
+                    'categories': 'categoriesScreen',
+                    'profile': 'profileScreen',
+                    'search': null, // handled separately
+                    'cart': null    // handled separately
+                };
+
+                if (nav === 'search') {
+                    this.toggleSearch();
+                    return;
+                }
+
+                if (nav === 'cart') {
+                    this.toggleCart();
+                    return;
+                }
+
+                const targetScreen = screenMap[nav];
+                if (targetScreen) {
+                    const current = NavigationManager.getCurrentScreen();
+
+                    // If clicking same nav item, scroll to top unless we are filtering
+                    if (current === targetScreen && !this.pendingScrollToGrid) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        return;
+                    }
+
+                    // Replace screen (don't add to stack for bottom nav switches)
+                    NavigationManager.replace(targetScreen);
+
+                    // Handle auto-scroll to products if requested
+                    if (nav === 'home' && this.pendingScrollToGrid) {
+                        setTimeout(() => {
+                            const grid = document.getElementById('productGrid');
+                            if (grid) {
+                                const headerOffset = 100; // Adjust for sticky header
+                                const elementPosition = grid.getBoundingClientRect().top;
+                                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                window.scrollTo({
+                                    top: offsetPosition,
+                                    behavior: "smooth"
+                                });
+                            }
+                            this.pendingScrollToGrid = false;
+                        }, 100);
+                    } else {
+                        window.scrollTo(0, 0);
+                    }
+                }
+            },
+
+            writeReview() {
+                alert('It is best considered to review it from the orders section after purchase.');
+            },
+
+            toggleContact() {
+                const modal = document.getElementById('contactModal');
+                if (modal) {
+                    modal.classList.toggle('active');
+                }
+            },
+
+            toggleWishlist(id) {
+                const idx = this.wishlist.indexOf(id);
+                if (idx > -1) this.wishlist.splice(idx, 1);
+                else this.wishlist.push(id);
+
+                this.renderProducts(document.querySelector('.cat-tab.active')?.dataset.cat || 'all');
+                this.updateProfileUI();
+
+                // If on category detail screen, re-render it to update hearts
+                if (NavigationManager.isOnScreen('categoryDetailScreen') && this.currentCategoryFilter) {
+                    this.openCategory(this.currentCategoryFilter);
+                }
+            },
+
+            initSlider() {
+                const slides = document.querySelectorAll('.slide');
+                const dotsContainer = document.getElementById('sliderDots');
+                if (!slides.length || !dotsContainer) return;
+
+                // Create dots
+                dotsContainer.innerHTML = '';
+                slides.forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `slider-dot ${idx === 0 ? 'active' : ''}`;
+                    dot.onclick = () => this.goToSlide(idx);
+                    dotsContainer.appendChild(dot);
+                });
+
+                this.currentSlide = 0;
+                this.slideInterval = setInterval(() => this.nextSlide(), 5000);
+            },
+
+            goToSlide(n) {
+                const slides = document.querySelectorAll('.slide');
+                const dots = document.querySelectorAll('.slider-dot');
+
+                slides[this.currentSlide].classList.remove('active');
+                dots[this.currentSlide].classList.remove('active');
+
+                this.currentSlide = (n + slides.length) % slides.length;
+
+                slides[this.currentSlide].classList.add('active');
+                dots[this.currentSlide].classList.add('active');
+
+                // Reset timer
+                clearInterval(this.slideInterval);
+                this.slideInterval = setInterval(() => this.nextSlide(), 5000);
+            },
+
+            nextSlide() {
+                this.goToSlide(this.currentSlide + 1);
+            },
+
+            showProduct(id) {
+                const product = this.products.find(p => p.id === id);
+                if (!product) return;
+
+                // Push to stack with product ID in state
+                // This tracks the "logical" navigation.
+                // We add 'animate: true' for smooth slide-in effect
+                NavigationManager.push('productDetail', { productId: id, animate: true });
+
+                // Render the UI for this product
+                this.renderProductDetail(id, true);
+            },
+
+            renderProductDetail(id, animate = false) {
+                const product = this.products.find(p => p.id === id);
+                if (!product) return;
+
+                this.selectedProduct = product;
+                this.currentProduct = product;
+                this.currentProductPhotoIndex = 0;
+
+                // Reset Scroll Position
+                const detailScreen = document.getElementById('productDetail');
+                if (detailScreen) detailScreen.scrollTop = 0;
+
+                // Update UI Elements
+                const img = document.getElementById('detailImage');
+                if (img) img.src = product.image;
+
+                const title = document.getElementById('detailTitle');
+                if (title) title.textContent = product.name;
+
+                const price = document.getElementById('detailPrice');
+                if (price) price.textContent = '₹' + product.price.toLocaleString('en-IN');
+
+                const desc = document.getElementById('detailDesc');
+                if (desc) desc.textContent = product.description || "Premium quality fabric with intricate handwoven patterns. Perfect for special occasions and festivals.";
+
+                this.updateDetailCartButtons(id);
+
+                // Initialize Gallery
+                this.initProductGallery();
+
+                // Render reviews and recommendations
+                this.renderReviews(id);
+                this.renderRecommendations(product);
+
+                // If animation requested, ensure the container has the class
+                if (animate) {
+                    const detailScreen = document.getElementById('productDetail');
+                    if (detailScreen) {
+                        detailScreen.classList.add('slide-in-right');
+                    }
+                }
+            },
+
+            initProductGallery() {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                const dotsContainer = document.getElementById('galleryDots');
+                const prevBtn = document.getElementById('galleryPrev');
+                const nextBtn = document.getElementById('galleryNext');
+
+                if (dotsContainer) {
+                    dotsContainer.innerHTML = images.map((_, idx) => `
+                        <span class="gallery-dot ${idx === 0 ? 'active' : ''}" onclick="App.goToProductPhoto(${idx})"></span>
+                    `).join('');
+                }
+
+                if (prevBtn && nextBtn) {
+                    const hasMultiple = images.length > 1;
+                    prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+                    nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+                }
+            },
+
+            changeProductPhoto(delta) {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                const newIndex = (this.currentProductPhotoIndex + delta + images.length) % images.length;
+                this.goToProductPhoto(newIndex);
+            },
+
+            goToProductPhoto(idx) {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                this.currentProductPhotoIndex = idx;
+
+                const img = document.getElementById('detailImage');
+                if (img) {
+                    img.style.opacity = '0';
+                    setTimeout(() => {
+                        img.src = images[idx];
+                        img.style.opacity = '1';
+                    }, 200);
+                }
+
+                // Update dots
+                document.querySelectorAll('.gallery-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === idx);
+                });
+            },
+
+            renderReviews(productId) {
+                const reviewsList = document.getElementById('reviewsList');
+                if (!reviewsList) return;
+
+                const productReviews = this.reviews[productId] || [];
+
+                if (productReviews.length === 0) {
+                    reviewsList.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                            <p>No reviews yet. Be the first to review this product!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                reviewsList.innerHTML = productReviews.map(review => `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-author">
+                                <div class="review-avatar">${review.author.substring(0, 2).toUpperCase()}</div>
+                                <div class="review-author-info">
+                                    <div class="review-author-name">${review.author}</div>
+                                    <div class="review-date">${review.date}</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                        </div>
+                        <div class="review-title">${review.title}</div>
+                        <div class="review-text">${review.text}</div>
+                    </div>
+                `).join('');
+            },
+
+            renderRecommendations(currentProduct) {
+                const grid = document.getElementById('recommendationsGrid');
+                if (!grid) return;
+
+                // Get products from the same category, excluding current product
+                const recommendations = this.products
+                    .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
+                    .slice(0, 4);
+
+                if (recommendations.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 20px; color: var(--text-secondary);">No recommendations available</p>';
+                    return;
+                }
+
+                grid.innerHTML = recommendations.map(p => `
+                    <div class="recommendation-card" onclick="App.showProduct(${p.id})">
+                        <div class="recommendation-img">
+                            <img src="${p.image}" alt="${p.name}">
+                        </div>
+                        <div class="recommendation-info">
+                            <div class="recommendation-name">${p.name}</div>
+                            <div class="recommendation-price">₹${p.price.toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            // Size Chart Modal
+            openSizeChart() {
+                const modal = document.getElementById('sizeChartModal');
+                if (modal) {
+                    modal.classList.add('active');
+                    this.renderSizeChart(this.currentSizeChartTab);
+                }
+            },
+
+            closeSizeChart() {
+                const modal = document.getElementById('sizeChartModal');
+                if (modal) modal.classList.remove('active');
+            },
+
+            switchSizeTab(tab) {
+                this.currentSizeChartTab = tab;
+
+                // Update tab buttons
+                document.querySelectorAll('.size-tab').forEach(t => t.classList.remove('active'));
+                event.target.classList.add('active');
+
+                this.renderSizeChart(tab);
+            },
+
+            renderSizeChart(type) {
+                const tableContainer = document.getElementById('sizeChartTable');
+                if (!tableContainer) return;
+
+                const chart = this.sizeCharts[type];
+                if (!chart) return;
+
+                let html = '<table>';
+                html += '<thead><tr>';
+                chart.headers.forEach(header => {
+                    html += `<th>${header}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+
+                chart.rows.forEach(row => {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<td>${cell}</td>`;
+                    });
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table>';
+                tableContainer.innerHTML = html;
+            },
+
+            // Review Modal
+            openReviewModal() {
+                const modal = document.getElementById('reviewModal');
+                if (modal) {
+                    modal.classList.add('active');
+                    this.selectedRating = 0;
+                    this.updateStarDisplay();
+                }
+            },
+
+            closeReviewModal() {
+                const modal = document.getElementById('reviewModal');
+                if (modal) modal.classList.remove('active');
+
+                // Reset form
+                document.getElementById('reviewForm')?.reset();
+                this.selectedRating = 0;
+                this.updateStarDisplay();
+            },
+
+            setRating(rating) {
+                this.selectedRating = rating;
+                this.updateStarDisplay();
+            },
+
+            updateStarDisplay() {
+                const stars = document.querySelectorAll('#starRatingInput .star');
+                stars.forEach((star, index) => {
+                    if (index < this.selectedRating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            },
+
+            submitReview(e) {
+                e.preventDefault();
+
+                if (this.selectedRating === 0) {
+                    alert('Please select a rating');
+                    return;
+                }
+
+                const title = document.getElementById('reviewTitle').value;
+                const text = document.getElementById('reviewText').value;
+                const productId = this.selectedProduct?.id;
+
+                if (!productId) return;
+
+                // Initialize reviews array if doesn't exist
+                if (!this.reviews[productId]) {
+                    this.reviews[productId] = [];
+                }
+
+                // Add new review
+                const newReview = {
+                    author: this.user?.name || 'Guest',
+                    rating: this.selectedRating,
+                    title: title,
+                    text: text,
+                    date: 'Just now'
+                };
+
+                this.reviews[productId].unshift(newReview);
+
+                // Re-render reviews
+                this.renderReviews(productId);
+
+                // Close modal
+                this.closeReviewModal();
+
+                // Show success message
+                alert('Thank you for your review!');
+            },
+
+
+            updateDetailCartButtons(productId) {
+                const isInCart = this.cart.some(item => item.id === productId);
+                const initialAction = document.getElementById('cartInitialAction');
+                const inAction = document.getElementById('cartInAction');
+
+                if (isInCart) {
+                    if (initialAction) initialAction.style.display = 'none';
+                    if (inAction) inAction.classList.add('active');
+                } else {
+                    if (initialAction) initialAction.style.display = 'block';
+                    if (inAction) inAction.classList.remove('active');
+                }
+            },
+
+            closeProductDetail() {
+                NavigationManager.pop();
+
+                // If we came from search, reopen search overlay
+                if (this.returnToSearch) {
+                    setTimeout(() => {
+                        const searchOverlay = document.getElementById('searchOverlay');
+                        const searchInput = document.getElementById('searchInput');
+
+                        if (searchOverlay && searchInput) {
+                            searchOverlay.classList.add('active');
+                            searchInput.value = this.lastSearchQuery || '';
+                            this.handleSearch(this.lastSearchQuery || '');
+                            searchInput.focus();
+                        }
+
+                        this.returnToSearch = false;
+                        this.lastSearchQuery = '';
+                    }, 100);
+                }
+            },
+
+            selectSize(size) {
+                this.selectedSize = size;
+                document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
+                const chip = document.querySelector(`.size-chip[data-size="${size}"]`);
+                if (chip) chip.classList.add('active');
+            },
+
+            addToCartFromDetail() {
+                if (!this.selectedProduct) return;
+                this.addToCart(this.selectedProduct.id);
+                this.updateDetailCartButtons(this.selectedProduct.id);
+            },
+
+            removeFromCartFromDetail() {
+                if (!this.selectedProduct) return;
+                this.cart = this.cart.filter(item => item.id !== this.selectedProduct.id);
+                this.updateCartUI();
+                this.updateDetailCartButtons(this.selectedProduct.id);
+            },
+
+            openCartFromDetail() {
+                // Don't close detail, just open cart overlay
+                this.toggleCart();
+            },
+
+            addToCart(id) {
+                const product = this.products.find(p => p.id === id);
+                if (!product) return;
+                const size = this.selectedSize || 'M';
+
+                const existing = this.cart.find(c => c.id === id && c.size === size);
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    this.cart.push({ ...product, size: size, quantity: 1 });
+                }
+                this.updateCartUI();
+
+                // Sync detail buttons if open
+                const detail = document.getElementById('productDetail');
+                if (detail && detail.classList.contains('active')) {
+                    this.updateDetailCartButtons(id);
+                }
+            },
+
+            buyNow() {
+                this.addToCart();
+                this.checkout();
+            },
+
+            toggleCart() {
+                const sidebar = document.getElementById('cartSidebar');
+                const overlay = document.getElementById('cartOverlay');
+                const isActive = sidebar.classList.contains('active');
+
+                if (isActive) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                } else {
+                    // Close other overlays first
+                    document.getElementById('searchOverlay')?.classList.remove('active');
+
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                }
+            },
+
+            updateCartUI() {
+                const cartItems = document.getElementById('cartItems');
+
+                // Calculate totals
+                const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+                // Update Badges and Counts
+                const badge = document.getElementById('cartBadge');
+                if (badge) badge.textContent = totalItems;
+
+                const headerCount = document.getElementById('cartCountHeader');
+                if (headerCount) headerCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+
+                // Update Price
+                const totalEl = document.getElementById('cartTotal');
+                if (totalEl) totalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
+
+                // Update Items
+                if (this.cart.length === 0) {
+                    cartItems.innerHTML = `
+                        <div class="empty-cart" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; opacity:0.6;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="width:64px; height:64px; margin-bottom:16px;">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                            </svg>
+                            <h3 style="font-family:'Playfair Display'; font-size:24px; margin-bottom:8px">Your bag is empty</h3>
+                            <p style="font-size:14px">Time to fill it with elegance.</p>
+                        </div>
+                    `;
+                } else {
+                    cartItems.innerHTML = this.cart.map((item, idx) => `
+                        <div class="cart-item">
+                            <img src="${item.image}" class="cart-item-image" alt="${item.name}">
+                            <div class="cart-item-details">
+                                <div>
+                                    <div class="cart-item-name">${item.name}</div>
+                                    <div class="cart-item-meta">
+                                        <span>Size: ${item.size}</span>
+                                        <span style="width:1px; background:#ccc"></span>
+                                        <span>${item.fabric}</span>
+                                    </div>
+                                    <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
+                                </div>
+                                <div class="cart-item-actions">
+                                    <div class="qty-stepper">
+                                        <button class="qty-btn-mini" onclick="App.updateCartItemQty(${idx}, -1)">−</button>
+                                        <div class="qty-val-mini">${item.quantity}</div>
+                                        <button class="qty-btn-mini" onclick="App.updateCartItemQty(${idx}, 1)">+</button>
+                                    </div>
+                                    <button class="remove-btn" onclick="App.removeFromCart(${idx})">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            },
+
+            updateCartItemQty(idx, delta) {
+                if (this.cart[idx]) {
+                    const newQty = this.cart[idx].quantity + delta;
+                    if (newQty < 1) {
+                        // Optional: confirm removal if going to 0? For now just stay at 1 or remove logic can be handled by remove button
+                        if (confirm('Remove item from cart?')) {
+                            this.removeFromCart(idx);
+                        }
+                    } else {
+                        this.cart[idx].quantity = newQty;
+                        this.updateCartUI();
+                    }
+                }
+            },
+
+            removeFromCart(idx) {
+                this.cart.splice(idx, 1);
+                this.updateCartUI();
+            },
+
+            checkout() {
+                if (this.cart.length === 0) {
+                    alert('Your bag is empty!');
+                    return;
+                }
+
+                // Close cart overlay
+                NavigationManager.closeAllOverlays();
+
+                // Update checkout UI
+                const summary = document.getElementById('checkoutSummary');
+                summary.innerHTML = this.cart.map(c => `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px">
+                        <span>${c.name} (${c.size}) x${c.quantity}</span>
+                        <span style="font-weight:600">₹${(c.price * c.quantity).toLocaleString('en-IN')}</span>
+                    </div>
+                `).join('');
+
+                const total = this.cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
+                document.getElementById('checkoutTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+
+                NavigationManager.push('checkoutScreen');
+            },
+
+            closeCheckout() {
+                NavigationManager.pop();
+            },
+
+            togglePassword(id) {
+                const input = document.getElementById(id);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    input.nextElementSibling.nextElementSibling.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" class="eye-icon"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+                } else {
+                    input.type = 'password';
+                    input.nextElementSibling.nextElementSibling.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                }
+            },
+
+            selectPayment(method) {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+                document.getElementById('upiInput').classList.toggle('active', method === 'upi');
+            },
+
+            processPayment() {
+                const total = this.cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
+                const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
+
+                // 1. Get Selected Method
+                const method = document.querySelector('.payment-method.active .payment-name').textContent.toLowerCase();
+
+                // 2. Construct Link
+                let payLink = `upi://pay?pa=9789252705@ybl&pn=IzhaiSarees&am=${total}&tn=Order-${orderId}&cu=INR`;
+                if (method.includes('google')) payLink = `upi://pay?pa=9789252705@okbizaxis&pn=IzhaiSarees&am=${total}&tn=Order-${orderId}&cu=INR`;
+                else if (method.includes('phonepe')) payLink = `phonepe://pay?pa=9789252705@ybl&pn=IzhaiSarees&am=${total}&tn=Order-${orderId}&cu=INR`;
+                else if (method.includes('paytm')) payLink = `paytmmp://pay?pa=9789252705@paytm&pn=IzhaiSarees&am=${total}&tn=Order-${orderId}&cu=INR`;
+
+                // 3. Open App "Silently" (User requested no confirmations or redirects shown)
+                window.location.href = payLink;
+
+                // 4. Update Modal Content for Screenshot Upload - NO "Redirecting" state
+                const modal = document.getElementById('paymentModal');
+                const content = document.querySelector('.payment-modal-content');
+
+                // New UI for Screenshot Upload
+                content.innerHTML = `
+                    <div style="text-align:center; padding:20px 0;">
+                        <div style="width:80px; height:80px; background:var(--purple-50); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto;">
+                            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--purple-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h3 style="font-size:20px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Upload Payment Screenshot</h3>
+                        <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px; line-height:1.5;">
+                            Please attach the payment screenshot for verification.<br>Your order will be placed immediately after.
+                        </p>
+
+                        <div class="file-upload-area" style="border: 2px dashed #ccc; border-radius: 12px; padding: 24px; margin-bottom: 24px; cursor:pointer;" onclick="document.getElementById('fileInput').click()">
+                            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="App.handleFileSelect(this)">
+                            <div id="filePreview" style="color:var(--purple-600); font-weight:600;">Tap to select image</div>
+                        </div>
+
+                        <button id="finalSubmitBtn" class="btn btn-primary" style="width:100%;" disabled onclick="App.confirmOrder()">
+                            Submit Order
+                        </button>
+                         <button class="btn ripple" style="background:transparent; color:var(--text-secondary); margin-top:12px; width:100%" onclick="App.closePaymentModal()">Cancel</button>
+                    </div>
+                `;
+
+                modal.classList.add('active');
+            },
+
+            handleFileSelect(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('filePreview');
+                        preview.innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:150px; border-radius:8px">`;
+                        document.getElementById('finalSubmitBtn').disabled = false;
+                        document.getElementById('finalSubmitBtn').textContent = 'Place Order';
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            },
+
+            closePaymentModal() {
+                document.getElementById('paymentModal').classList.remove('active');
+                document.getElementById('checkoutScreen').classList.remove('active');
+
+                // Fix Bottom Nav Bug: Ensure we reset/update nav when leaving payment
+                // We are likely popping back to Cart or App.
+                // However, checkoutScreen is often pushed on top.
+                // Let's force a pop if checkout is active, or just ensure nav is visible.
+
+                if (NavigationManager.getCurrentScreen() === 'checkoutScreen') {
+                    NavigationManager.pop();
+                }
+
+                this.cart = [];
+                this.updateCartUI();
+
+                // Explicitly update nav visibility
+                setTimeout(() => NavigationManager.updateBottomNav(), 100);
+            },
+
+            cancelPayment() {
+                clearTimeout(this.paymentTimer);
+                const icon = document.getElementById('paymentStatusIcon');
+                const title = document.getElementById('paymentStatusTitle');
+                const desc = document.getElementById('paymentStatusDesc');
+                const cancelBtn = document.getElementById('paymentCancelBtn');
+
+                icon.className = 'payment-status-icon error';
+                icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-500)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+                icon.style.borderColor = 'var(--rose-500)';
+                title.textContent = 'Payment Failed';
+                desc.textContent = 'The transaction was cancelled or timed out. Please try again.';
+
+                cancelBtn.textContent = 'Close';
+                cancelBtn.onclick = () => App.closePaymentModal();
+            },
+
+            confirmOrder() {
+                // Gather details (Mock)
+                const items = this.cart.map(c => `- ${c.name} (${c.size}) x${c.qty}`).join('%0A');
+                const total = this.cart.reduce((sum, c) => sum + c.price * c.qty, 0);
+
+                // Simulate Manual Verification Message
+                const content = document.querySelector('.payment-modal-content');
+                content.innerHTML = `
+                     <div style="text-align:center; padding:30px 10px;">
+                        <div style="width:80px; height:80px; background:#4CAF50; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; box-shadow:0 10px 20px rgba(76, 175, 80, 0.3);">
+                            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <h3 style="font-size:22px; font-weight:800; color:var(--text-primary); margin-bottom:12px;">Order Placed!</h3>
+                        <p style="color:var(--text-secondary); font-size:15px; margin-bottom:30px; line-height:1.6;">
+                            Thanks for the screenshot!<br>We will verify the payment manually and ship your order soon.
+                        </p>
+                        <button class="btn btn-primary" onclick="App.closePaymentModal()" style="width:100%">Back to Home</button>
+                    </div>
+                `;
+
+                // Save to internal state
+                this.orders.push({
+                    id: '#' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                    date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    total: total,
+                    status: 'Verifying Payment', // Updated status
+                    items: this.cart.map(c => c.name).join(', ')
+                });
+
+                this.updateProfileUI();
+            },
+
+
+
+            showProfile() {
+                this.updateProfileUI();
+                NavigationManager.push('profileScreen');
+            },
+
+            openDashboardModal(title, content) {
+                const modal = document.getElementById('dashboardModal');
+                const titleEl = document.getElementById('dashboardModalTitle');
+                const bodyEl = document.getElementById('dashboardModalBody');
+                if (!modal || !titleEl || !bodyEl) return;
+
+                titleEl.textContent = title;
+                bodyEl.innerHTML = content;
+                modal.classList.add('active');
+            },
+
+            closeDashboardModal() {
+                const modal = document.getElementById('dashboardModal');
+                if (modal) modal.classList.remove('active');
+            },
+
+            closeProfile() {
+                document.getElementById('profileScreen').classList.remove('active');
+            },
+
+            logout() {
+                // Dissolve Animation
+                const app = document.getElementById('app');
+                const screen = document.querySelector('.screen.active') || app;
+
+                if (screen) {
+                    screen.classList.add('dissolve-out');
+                }
+
+                setTimeout(() => {
+                    this.user = null;
+                    this.cart = [];
+                    this.wishlist = [];
+                    this.orders = [];
+
+                    NavigationManager.closeAllOverlays();
+                    NavigationManager.reset('intro');
+
+                    if (screen) screen.classList.remove('dissolve-out');
+
+                    // Restart intro animation
+                    const intro = document.getElementById('intro');
+                    if (intro) {
+                        intro.classList.remove('active');
+                        void intro.offsetWidth; // Force reflow
+                        intro.classList.add('active');
+                    }
+
+                    setTimeout(() => NavigationManager.replace('gateway'), 3500);
+
+                    this.toggleAdminUI(false);
+                }, 800); // Wait for dissolve animation
+            },
+
+            clearCategoryFilter() {
+                this.currentCategoryFilter = null;
+                const badge = document.getElementById('searchCategoryBadge');
+                if (badge) badge.classList.remove('active');
+
+                const fabricSelect = document.getElementById('filterFabric');
+                const priceSelect = document.getElementById('filterPrice');
+                const sortSelect = document.getElementById('sortOptions');
+                if (fabricSelect) fabricSelect.value = '';
+                if (priceSelect) priceSelect.value = '';
+                if (sortSelect) sortSelect.value = 'newest';
+
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.placeholder = 'Search sarees, kurtis, silk...';
+                    this.handleSearch(searchInput.value);
+                }
+            },
+
+            toggleSearch() {
+                const searchOverlay = document.getElementById('searchOverlay');
+                const isActive = searchOverlay.classList.contains('active');
+
+                if (isActive) {
+                    searchOverlay.classList.remove('active');
+                    // Clear category filter when closing search from global context
+                    if (NavigationManager.getCurrentScreen() !== 'categoryDetailScreen') {
+                        this.currentCategoryFilter = null;
+                    }
+                } else {
+                    // Close other overlays first
+                    NavigationManager.closeAllOverlays();
+
+                    // Set category filter if we're in a category view
+                    const currentScreen = NavigationManager.getCurrentScreen();
+                    if (currentScreen === 'categoryDetailScreen') {
+                        // Category filter already set by openCategory
+                        // Update search placeholder
+                        const searchInput = document.getElementById('searchInput');
+                        if (searchInput) {
+                            const categoryName = document.getElementById('categoryDetailTitle')?.textContent || 'this category';
+                            searchInput.placeholder = `Search in ${categoryName}...`;
+                        }
+                    } else {
+                        this.currentCategoryFilter = null;
+                        const searchInput = document.getElementById('searchInput');
+                        if (searchInput) {
+                            searchInput.placeholder = 'Search sarees, kurtis, silk...';
+                        }
+                    }
+
+                    searchOverlay.classList.add('active');
+                    const badge = document.getElementById('searchCategoryBadge');
+                    const badgeText = document.getElementById('categoryBadgeText');
+
+                    if (currentScreen === 'categoryDetailScreen' && this.currentCategoryFilter) {
+                        if (badge) {
+                            badge.classList.add('active');
+                            const categoryName = document.getElementById('categoryDetailTitle')?.textContent || 'this category';
+                            if (badgeText) badgeText.textContent = `Searching in: ${categoryName}`;
+                        }
+                    } else {
+                        if (badge) badge.classList.remove('active');
+                    }
+
+                    // Reset Filters
+                    const fabricSelect = document.getElementById('filterFabric');
+                    const priceSelect = document.getElementById('filterPrice');
+                    const sortSelect = document.getElementById('sortOptions');
+                    if (fabricSelect) fabricSelect.value = '';
+                    if (priceSelect) priceSelect.value = '';
+                    if (sortSelect) sortSelect.value = 'newest';
+
+                    const input = document.getElementById('searchInput');
+                    input.value = '';
+                    this.handleSearch('');
+                    setTimeout(() => input.focus(), 300);
+                }
+            },
+
+            handleSearch(query) {
+                const resultsContainer = document.getElementById('searchResults');
+
+                // Get filter values
+                const fabricFilter = document.getElementById('filterFabric')?.value;
+                const priceFilter = document.getElementById('filterPrice')?.value;
+                const sortFilter = document.getElementById('sortOptions')?.value;
+
+                if (!query.trim() && !fabricFilter && !priceFilter) {
+                    resultsContainer.innerHTML = `
+                        <div class="search-empty">
+                            <div class="search-empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-300)" stroke-width="1.5" width="48" height="48">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </div>
+                            <p>Start typing to search ${this.currentCategoryFilter ? 'in this category' : 'for your favorites'}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Start with all products or category-filtered products
+                let filtered = [...this.products];
+
+                // Apply Search Text Query
+                if (query.trim()) {
+                    filtered = filtered.filter(p =>
+                        p.name.toLowerCase().includes(query.toLowerCase()) ||
+                        p.category.toLowerCase().includes(query.toLowerCase()) ||
+                        p.fabric.toLowerCase().includes(query.toLowerCase())
+                    );
+                }
+
+                // Apply Fabric Filter
+                if (fabricFilter) {
+                    filtered = filtered.filter(p => p.fabric === fabricFilter);
+                }
+
+                // Apply Price Filter
+                if (priceFilter) {
+                    const [min, max] = priceFilter.split('-').map(Number);
+                    filtered = filtered.filter(p => p.price >= min && p.price <= max);
+                }
+
+                // If we're in a category view, filter by that category
+                if (this.currentCategoryFilter) {
+                    filtered = filtered.filter(p =>
+                        p.category === this.currentCategoryFilter ||
+                        p.fabric === this.currentCategoryFilter ||
+                        (p.occasion && p.occasion === this.currentCategoryFilter)
+                    );
+                }
+
+                // Apply Sorting
+                if (sortFilter === 'priceLow') {
+                    filtered.sort((a, b) => a.price - b.price);
+                } else if (sortFilter === 'priceHigh') {
+                    filtered.sort((a, b) => b.price - a.price);
+                }
+
+                if (filtered.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="search-empty">
+                            <div class="search-empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple-300)" stroke-width="1.5" width="48" height="48">
+                                    <path d="M20.38 3.4a2 2 0 0 0-2 0l-2.43 1.21a2 2 0 0 1-1.9 0l-2.43-1.2h0a2 2 0 0 0-1.9 0l-2.43 1.2h0a2 2 0 0 1-1.9 0L3 3.4"></path>
+                                    <path d="M12 12v10"></path>
+                                    <path d="M12 12h-3"></path>
+                                    <path d="M12 12h3"></path>
+                                    <path d="M3 3.4v17.2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3.4"></path>
+                                </svg>
+                            </div>
+                            <p>No products found ${this.currentCategoryFilter ? 'in this category ' : ''}for "${query}"</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultsContainer.innerHTML = filtered.map((p, idx) => `
+                    <div class="product-card" style="--idx: ${idx}" onclick="App.showProductFromSearch(${p.id})">
+                        <div class="product-img">
+                            <img src="${p.image}" alt="${p.name}">
+                            <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" 
+                                onclick="event.stopPropagation(); App.toggleWishlist(${p.id}); App.updateSearchResults('${query.replace(/'/g, "\\'")}')">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${p.name}</div>
+                            <div class="product-price">
+                                ₹${p.price.toLocaleString('en-IN')}
+                                <span class="product-original-price">₹${p.originalPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            handleFilterChange() {
+                const searchInput = document.getElementById('searchInput');
+                this.handleSearch(searchInput ? searchInput.value : '');
+            },
+
+            filterCategoryView(filter) {
+                // Update active chip
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                    chip.style.background = 'white';
+                    chip.style.color = 'var(--text-primary)';
+                    chip.style.borderColor = '#e0e0e0';
+                });
+
+                const activeChip = document.querySelector(`.filter-chip[data-filter="${filter}"]`);
+                if (activeChip) {
+                    activeChip.classList.add('active');
+                    activeChip.style.background = 'var(--purple-500)';
+                    activeChip.style.color = 'white';
+                    activeChip.style.borderColor = 'var(--purple-500)';
+                }
+
+                // Navigate to home and apply filter
+                this.filterCategory(filter);
+                this.switchNav('home');
+            },
+
+            toggleWishlistDetail() {
+                if (!this.selectedProduct) return;
+                this.toggleWishlist(this.selectedProduct.id);
+                const btn = document.querySelector('#productDetail .wishlist-btn');
+                btn.classList.toggle('active', this.wishlist.includes(this.selectedProduct.id));
+            },
+
+            showAddProduct() {
+                NavigationManager.push('addProductScreen');
+            },
+
+            closeAddProduct() {
+                NavigationManager.pop();
+                document.getElementById('addProductForm').reset();
+                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('uploadPlaceholder').style.display = 'block';
+            },
+
+            handleAddProduct(e) {
+                e.preventDefault();
+                const form = e.target;
+
+                const newProduct = {
+                    id: Date.now(), // simple unique id
+                    name: form.elements['prodName'].value,
+                    price: Number(form.elements['prodPrice'].value),
+                    originalPrice: Number(form.elements['prodOrigPrice'].value) || 0,
+                    category: form.elements['prodCat'].value,
+                    fabric: form.elements['prodFabric'].value,
+                    description: form.elements['prodDesc'].value,
+                    image: this.newProductImage || 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E'
+                };
+
+                this.products.unshift(newProduct); // Add to top
+                this.renderProducts();
+                alert('Product Added Successfully!');
+                this.closeAddProduct();
+                this.newProductImage = null;
+            },
+
+            closeProfile() {
+                NavigationManager.pop();
+            },
+
+            // PREMIUM SLIDESHOW METHODS
+            initSlider() {
+                const slides = document.querySelectorAll('.slide');
+                const dotsContainer = document.getElementById('sliderDots');
+                if (!slides.length || !dotsContainer) return;
+
+                dotsContainer.innerHTML = '';
+                slides.forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `slider-dot ${idx === 0 ? 'active' : ''}`;
+                    dot.onclick = () => this.goToSlide(idx);
+                    dotsContainer.appendChild(dot);
+                });
+
+                this.currentSlide = 0;
+                this.startAutoplay();
+            },
+
+            startAutoplay() {
+                this.stopAutoplay();
+                this.slideInterval = setInterval(() => this.nextSlide(), 5000);
+            },
+
+            stopAutoplay() {
+                if (this.slideInterval) clearInterval(this.slideInterval);
+            },
+
+            goToSlide(n) {
+                const slides = document.querySelectorAll('.slide');
+                const dots = document.querySelectorAll('.slider-dot');
+                if (!slides.length) return;
+
+                slides[this.currentSlide].classList.remove('active');
+                if (dots[this.currentSlide]) dots[this.currentSlide].classList.remove('active');
+
+                this.currentSlide = (n + slides.length) % slides.length;
+
+                slides[this.currentSlide].classList.add('active');
+                if (dots[this.currentSlide]) dots[this.currentSlide].classList.add('active');
+
+                this.startAutoplay();
+            },
+
+            nextSlide() { this.goToSlide(this.currentSlide + 1); },
+            prevSlide() { this.goToSlide(this.currentSlide - 1); },
+
+            showEditProfile() {
+                const content = `
+                    <div class="slide-next">
+                        <form onsubmit="App.saveProfile(event)" id="editProfileForm">
+                            <div class="form-group">
+                                <input type="text" class="form-input" id="editName" value="${this.user?.name || ''}" placeholder=" " required>
+                                <label class="form-label">Full Name</label>
+                            </div>
+                            <div class="form-group" style="margin-top:20px">
+                                <input type="email" class="form-input" id="editEmail" value="${this.user?.email || ''}" placeholder=" " required>
+                                <label class="form-label">Email</label>
+                            </div>
+                            <button type="submit" class="form-btn ripple" style="margin-top:32px; background:var(--purple-600); width:100%">Save Changes</button>
+                        </form>
+                    </div>
+                `;
+                this.openDashboardModal('Edit Profile', content);
+            },
+
+            saveProfile(e) {
+                e.preventDefault();
+                const name = document.getElementById('editName').value;
+                const email = document.getElementById('editEmail').value;
+                this.user = { ...this.user, name, email };
+                this.updateProfileUI();
+
+                const bodyEl = document.getElementById('dashboardModalBody');
+                if (bodyEl) {
+                    bodyEl.innerHTML = `
+                        <div class="slide-prev" style="text-align:center; padding:20px">
+                            <div style="width:56px; height:56px; background:var(--purple-100); color:var(--purple-600); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:28px"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <h3 class="heading">Updated!</h3>
+                            <button class="btn ripple" style="margin-top:20px; background:var(--purple-600); color:white; width:100%" onclick="App.closeDashboardModal()">Done</button>
+                        </div>
+                    `;
+                }
+            },
+
+            showOrders() {
+                if (this.orders.length === 0) {
+                    this.orders = [
+                        { id: '#ORD-8821', date: '26 Dec 2024', total: 8999, status: 'Delivered', items: 'Royal Purple Silk Saree' },
+                        { id: '#ORD-7732', date: '12 Nov 2024', total: 3499, status: 'Shipped', items: 'Teal Anarkali Kurti' }
+                    ];
+                    this.updateProfileUI();
+                }
+
+                const content = `
+                    <div class="slide-next">
+                        ${this.orders.map(o => `
+                            <div style="background:rgba(124, 77, 255, 0.05); padding:16px; margin-bottom:12px; border-radius:12px; border:1px solid rgba(124, 77, 255, 0.1)">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px">
+                                    <span style="font-weight:700; color:var(--purple-800)">${o.id}</span>
+                                    <span style="font-size:10px; font-weight:700; text-transform:uppercase; padding:4px 8px; border-radius:6px; background:${o.status === 'Delivered' ? 'rgba(46, 125, 50, 0.1)' : 'rgba(239, 108, 0, 0.1)'}; color:${o.status === 'Delivered' ? '#2e7d32' : '#ef6c00'}">${o.status}</span>
+                                </div>
+                                <div style="font-size:14px; margin-bottom:4px">${o.items}</div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px">
+                                     <span style="font-size:12px; color:var(--text-muted)">${o.date}</span>
+                                     <span style="font-weight:700">₹${o.total.toLocaleString('en-IN')}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                this.openDashboardModal('Order History', content);
+            },
+
+            showWishlistScreen() {
+                const items = this.products.filter(p => this.wishlist.includes(p.id));
+                let content = '';
+
+                if (items.length === 0) {
+                    content = `
+                        <div class="slide-next" style="text-align:center; padding:20px">
+                            <div style="font-size:40px; margin-bottom:12px">❤️</div>
+                            <h3>Empty Wishlist</h3>
+                            <button class="btn ripple" style="margin-top:16px; background:var(--purple-600); color:white" onclick="App.closeDashboardModal(); App.closeProfile()">Browse Store</button>
+                        </div>
+                    `;
+                } else {
+                    content = `
+                        <div class="wishlist-popup-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            ${items.map(p => `
+                                <div class="product-card" onclick="App.showProduct(${p.id}); App.closeDashboardModal()" style="padding:8px">
+                                    <img src="${p.image}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px">
+                                    <div style="font-weight:600; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${p.name}</div>
+                                    <div style="font-weight:700; color:var(--purple-600); font-size:12px">₹${p.price.toLocaleString('en-IN')}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                this.openDashboardModal('My Wishlist', content);
+            },
+
+            showSettings() {
+                NavigationManager.push('settingsScreen');
+            },
+
+            deleteProduct(id) {
+                if (!confirm('Are you sure you want to delete this product?')) return;
+                this.products = this.products.filter(p => p.id !== id);
+                this.renderProducts();
+            },
+            showProductFromSearch(id) {
+                // Store that we came from search
+                this.returnToSearch = true;
+                this.lastSearchQuery = document.getElementById('searchInput')?.value || '';
+
+                // Close search overlay
+                const searchOverlay = document.getElementById('searchOverlay');
+                if (searchOverlay) {
+                    searchOverlay.classList.remove('active');
+                }
+                // Show product
+                this.showProduct(id);
+            },
+            updateSearchResults(query) {
+                // Re-render search results to update wishlist states
+                this.handleSearch(query);
+            },
+            handleImageUpload(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.newProductImage = e.target.result;
+                        const img = document.getElementById('imagePreview');
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+                        document.getElementById('uploadPlaceholder').style.display = 'none';
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize particles, scroll navbar, and animations
+            // Create floating particles
+            const particlesContainer = document.getElementById('particles');
+            if (particlesContainer) {
+                const particleCount = 30;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 20 + 's';
+                    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            // Scroll-triggered fade-in animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const fadeInObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe sections for fade-in effect
+            setTimeout(() => {
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(section => {
+                    section.classList.add('fade-in-view');
+                    fadeInObserver.observe(section);
+                });
+            }, 1000);
+
+            // iOS 26 Liquid Glass Navbar - Hide on scroll, show on stop
+            let scrollTimeout;
+            let isScrolling = false;
+            const bottomNav = document.querySelector('.bottom-nav');
+
+            function handleScroll() {
+                // Hide navbar immediately when scrolling starts
+                if (bottomNav && !isScrolling) {
+                    isScrolling = true;
+                    bottomNav.classList.add('nav-hidden');
+                }
+
+                // Clear previous timeout
+                clearTimeout(scrollTimeout);
+
+                // Show navbar after scrolling stops (300ms delay for iOS feel)
+                scrollTimeout = setTimeout(() => {
+                    if (bottomNav && isScrolling) {
+                        isScrolling = false;
+                        bottomNav.classList.remove('nav-hidden');
+                    }
+                }, 300);
+            }
+
+            window.addEventListener('scroll', handleScroll, { passive: true });
+
+            // Attach scroll listener to all scrollable screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.addEventListener('scroll', handleScroll, { passive: true });
+            });
+
+            // Initialize main app
+            App.init();
+        });
+    </script>
+
+</body>
+
+</html>
