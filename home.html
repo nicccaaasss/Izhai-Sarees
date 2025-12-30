@@ -8,102 +8,185 @@
     <meta name="description" content="Discover handcrafted sarees and kurtis at Izhai - premium Indian ethnic wear">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Playball&family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="home.css">
     <style>
         /* ============================================
-   CATEGORY SCREEN IMPROVEMENTS - LAPTOP VIEW
+   CATEGORY SCREEN - CENTERED GRID REDESIGN
    ============================================ */
 
-        /* Improved Bento Grid Layout for Desktop */
-        @media (min-width: 1024px) {
-            .bento-grid {
-                grid-template-columns: repeat(6, 1fr);
-                grid-template-rows: repeat(3, 200px);
+        /* Container for the centered grid */
+        .centered-category-container {
+            width: 100%;
+            min-height: 100%;
+            /* Allow scrolling */
+            display: flex;
+            align-items: center;
+            /* Center-align if content is short */
+            justify-content: center;
+            padding: 80px 20px 100px;
+            /* Extra padding for nav/header */
+            box-sizing: border-box;
+        }
+
+        /* Allow scrolling on the screen itself */
+        #categoriesScreen {
+            display: block;
+            /* Override flex to allow standard flow */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* The Grid Itself */
+        .simple-category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Category Card Styling */
+        .category-card-new {
+            position: relative;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            /* Consistent aspect ratio */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Hover Effects */
+        .category-card-new:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(124, 77, 255, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(124, 77, 255, 0.3);
+        }
+
+        /* Card Image (Background) */
+        .category-card-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            z-index: 0;
+        }
+
+        .category-card-new:hover .category-card-img {
+            transform: scale(1.1);
+        }
+
+        /* Overlay */
+        .category-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+
+        .category-card-new:hover .category-card-overlay {
+            background: linear-gradient(to top, rgba(74, 28, 111, 0.7) 0%, rgba(124, 77, 255, 0.2) 100%);
+        }
+
+        /* Content */
+        .category-card-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            color: white;
+            width: 100%;
+        }
+
+        .category-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+
+        .category-card-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease 0.1s;
+        }
+
+        .category-card-new:hover .category-card-title {
+            transform: translateY(0);
+        }
+
+        .category-card-new:hover .category-card-subtitle {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .simple-category-grid {
+                grid-template-columns: repeat(2, 1fr);
                 gap: 20px;
-                padding: 40px 60px 120px;
-                max-width: 1600px;
+                padding: 0 20px;
             }
 
-            /* Hero Item - Takes up 2x2 space */
-            .bento-item-hero {
-                grid-column: span 3;
-                grid-row: span 2;
-                height: auto;
-                padding: 32px;
-            }
-
-            .bento-item-hero .bento-title {
-                font-size: 42px;
-            }
-
-            .bento-item-hero .bento-subtitle {
-                font-size: 16px;
-            }
-
-            /* Standard Items - Better proportions */
-            .bento-item-standard {
-                grid-column: span 3;
-                grid-row: span 1;
-                height: auto;
-                padding: 24px;
-            }
-
-            .bento-item-standard .bento-title {
+            .category-card-title {
                 font-size: 24px;
-            }
-
-            .bento-item-standard .bento-subtitle {
-                font-size: 14px;
-            }
-
-            /* Wide Item - Spans 2 columns */
-            .bento-item-standard.wide {
-                grid-column: span 6;
-                grid-row: span 1;
-            }
-
-            .bento-item-standard.wide .bento-title {
-                font-size: 28px;
-            }
-
-            /* Smooth hover effects */
-            .glass-card {
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            }
-
-            .glass-card:hover {
-                transform: translateY(-12px) scale(1.02);
-                box-shadow: 0 30px 60px rgba(124, 77, 255, 0.2);
-                border-color: rgba(124, 77, 255, 0.3);
-            }
-
-            .glass-card:hover .bento-overlay {
-                background: linear-gradient(to top, rgba(124, 77, 255, 0.4) 0%, rgba(0, 0, 0, 0) 60%);
             }
         }
 
-        /* Extra large screens - 4 column layout */
-        @media (min-width: 1440px) {
-            .bento-grid {
-                grid-template-columns: repeat(8, 1fr);
-                grid-template-rows: repeat(3, 220px);
-                gap: 24px;
-                padding: 60px 80px 140px;
+        @media (max-width: 600px) {
+            .centered-category-container {
+                padding: 80px 16px 100px;
+                /* Adjusted padding for mobile */
+                align-items: flex-start;
+                /* Ensure start alignment for scrolling */
             }
 
-            .bento-item-hero {
-                grid-column: span 4;
-                grid-row: span 2;
+            .simple-category-grid {
+                grid-template-columns: 1fr;
+                /* Single column - Old Mobile Layout Feel */
+                gap: 20px;
+                width: 100%;
+                max-width: 100%;
             }
 
-            .bento-item-standard {
-                grid-column: span 2;
-                grid-row: span 1;
+            .category-card-new {
+                aspect-ratio: 16/9;
+                /* Wider cards for mobile */
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                /* Softer shadow */
             }
 
-            .bento-item-standard.wide {
-                grid-column: span 4;
+            .category-card-title {
+                transform: translateY(0);
+                font-size: 24px;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .category-card-subtitle {
+                opacity: 1;
+                transform: translateY(0);
+                font-size: 14px;
             }
         }
 
@@ -212,6 +295,8 @@
         .bento-item,
         .glass-card {
             will-change: transform;
+            cursor: pointer;
+            /* Ensure clickability indication */
         }
 
         .category-header {
@@ -300,8 +385,8 @@
             /* Product grid - proper spacing below header */
             #categoryDetailScreen #categoryDetailGrid {
                 padding: 32px 60px 120px;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 24px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
             }
         }
 
@@ -334,8 +419,8 @@
 
             #categoryDetailScreen #categoryDetailGrid {
                 padding: 40px 80px 140px;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 32px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
                 max-width: 1800px;
                 margin: 0 auto;
             }
@@ -373,6 +458,9 @@
             #categoryDetailScreen {
                 display: block;
                 padding-top: 0;
+                overflow-y: auto;
+                /* Enable scrolling on desktop */
+                -webkit-overflow-scrolling: touch;
             }
 
             /* Sticky Header with Back Button, Title, and Search */
@@ -381,6 +469,8 @@
                 position: sticky;
                 top: 0;
                 z-index: 200;
+                width: 100%;
+                height: auto;
                 width: 100%;
                 height: auto;
                 padding: 20px 60px;
@@ -404,6 +494,7 @@
                 background: rgba(0, 0, 0, 0.03);
                 border-radius: 50%;
                 transition: all 0.3s ease;
+                cursor: pointer;
             }
 
             .category-header .icon-btn:first-child:hover {
@@ -485,8 +576,8 @@
             /* Product Grid - Proper spacing */
             #categoryDetailScreen #categoryDetailGrid {
                 padding: 40px 60px 120px;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 28px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
             }
 
             /* Product Cards - Better sizing */
@@ -526,8 +617,8 @@
 
             #categoryDetailScreen #categoryDetailGrid {
                 padding: 50px 80px 140px;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 32px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
                 max-width: 1800px;
                 margin: 0 auto;
             }
@@ -542,21 +633,18 @@
             #categoryDetailScreen #categoryDetailGrid {
                 padding: 60px 120px 160px;
                 max-width: 2200px;
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                gap: 40px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 24px;
             }
         }
 
         /* Ensure proper stacking context */
-        #categoryDetailScreen {
-            position: relative;
-            z-index: 0;
-        }
 
         .category-header {
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            /* Increased to ensure it stays above content */
         }
 
         /* Smooth scroll behavior */
@@ -1013,6 +1101,99 @@
                 gap: 20px;
             }
         }
+
+        /* ============================================
+           SEARCH RESULTS STYLING
+           ============================================ */
+        #searchResults {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        #searchResults .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #searchResults .product-card:active {
+            transform: scale(0.98);
+        }
+
+        #searchResults .product-img {
+            aspect-ratio: 3/4;
+            width: 100%;
+            position: relative;
+        }
+
+        #searchResults .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #searchResults .product-info {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #searchResults .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #searchResults .product-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--purple-600);
+            display: flex !important;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        #searchResults .product-original-price {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        /* List view for search results (optional alternative) */
+        /* Currently using grid to match product cards */
+
+        @media (max-width: 600px) {
+            #searchResults {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+
+            #searchResults .product-name {
+                font-size: 13px;
+            }
+
+            #searchResults .product-price {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -1041,12 +1222,16 @@
             <path class="thread-path" d="M0,80 Q25,75 50,80 T100,80" style="animation-delay:0.6s" />
         </svg>
         <div class="logo-container">
-            <div class="logo-text">
-                <span class="logo-letter">I</span>
-                <span class="logo-letter">z</span>
-                <span class="logo-letter">h</span>
-                <span class="logo-letter">a</span>
-                <span class="logo-letter">i</span>
+            <div class="logo-text cursive-writing">
+                <svg viewBox="0 0 450 200" class="writing-svg">
+                    <defs>
+                        <mask id="textMask">
+                            <path class="mask-stroke" d="M 20,110 L 430,110" />
+                        </mask>
+                    </defs>
+                    <text x="50%" y="125" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="110"
+                        fill="#d4af37" mask="url(#textMask)">Izhai</text>
+                </svg>
             </div>
             <p class="tagline">Draped in Elegance</p>
             <div class="intro-ornament"></div>
@@ -1181,8 +1366,8 @@
                             <div class="accent-line"></div>
                             <h2 class="slide-title">Festive Collection</h2>
                             <p class="slide-subtitle">Elegant Silk Sarees at 30% Off</p>
-                            <button class="slide-btn" onclick="App.openCategory('silk')">
-                                <span>Shop Silk</span>
+                            <button class="slide-btn" onclick="App.switchNav('categories')">
+                                <span>Explore Collections</span>
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
@@ -1198,8 +1383,8 @@
                             <div class="accent-line"></div>
                             <h2 class="slide-title">Bridal Special</h2>
                             <p class="slide-subtitle">Handwoven Masterpieces for Your Big Day</p>
-                            <button class="slide-btn" onclick="App.openCategory('wedding')">
-                                <span>View Bridal</span>
+                            <button class="slide-btn" onclick="App.switchNav('categories')">
+                                <span>Explore Collections</span>
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
@@ -1466,6 +1651,36 @@
             </button>
         </div>
 
+        <!-- Search Filters -->
+        <div class="search-filters-bar">
+            <div class="filter-dropdown">
+                <select id="filterFabric" onchange="App.handleFilterChange()">
+                    <option value="">Fabric: All</option>
+                    <option value="silk">Silk</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="georgette">Georgette</option>
+                    <option value="chiffon">Chiffon</option>
+                    <option value="linen">Linen</option>
+                </select>
+            </div>
+            <div class="filter-dropdown">
+                <select id="filterPrice" onchange="App.handleFilterChange()">
+                    <option value="">Price: All</option>
+                    <option value="0-5000">Under ₹5,000</option>
+                    <option value="5000-10000">₹5,000 - ₹10,000</option>
+                    <option value="10000-20000">₹10,000 - ₹20,000</option>
+                    <option value="20000-999999">Above ₹20,000</option>
+                </select>
+            </div>
+            <div class="filter-dropdown">
+                <select id="sortOptions" onchange="App.handleFilterChange()">
+                    <option value="newest">Sort: Newest</option>
+                    <option value="priceLow">Price: Low - High</option>
+                    <option value="priceHigh">Price: High - Low</option>
+                </select>
+            </div>
+        </div>
+
         <div class="search-results" id="searchResults">
             <div class="search-empty">
                 <span class="search-empty-icon">🔍</span>
@@ -1694,11 +1909,19 @@
         <div class="product-detail-wrapper">
             <!-- Wrapper for Desktop Flex Layout -->
             <div class="detail-gallery" id="detailGallery">
+                <button class="gallery-nav prev" id="galleryPrev" onclick="App.changeProductPhoto(-1)">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                </button>
                 <img id="detailImage" src="" alt="">
-                <div class="gallery-dots">
-                    <span class="gallery-dot active"></span>
-                    <span class="gallery-dot"></span>
-                    <span class="gallery-dot"></span>
+                <button class="gallery-nav next" id="galleryNext" onclick="App.changeProductPhoto(1)">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+                <div class="gallery-dots" id="galleryDots">
+                    <!-- Dots will be generated here -->
                 </div>
             </div>
             <div class="detail-content">
@@ -1899,72 +2122,74 @@
     <!-- Categories Screen -->
     <!-- Ethereal Glass Categories Screen -->
     <!-- Categories Screen -->
+    <!-- Categories Screen -->
     <div id="categoriesScreen" class="screen">
-        <!-- Refined Bento Grid - No Header/Filters -->
-        <div class="bento-grid" style="padding-top: 20px;">
-            <!-- Hero Item: Sarees -->
-            <div class="glass-card bento-item bento-item-hero" onclick="App.openCategory('saree')">
-                <img src="data:image/svg+xml,%3Csvg width='800' height='800' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234a148c;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%237c4dff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23grad1)'/%3E%3Cpath d='M0 400 Q 400 0 800 400' stroke='rgba(255,255,255,0.1)' fill='none' stroke-width='100'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Sarees">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Sarees</h2>
-                    <p class="bento-subtitle">45+ Handwoven Masterpieces</p>
+        <div class="centered-category-container">
+            <div class="simple-category-grid">
+                <!-- 1. Sarees -->
+                <div class="category-card-new" onclick="App.openCategory('saree')">
+                    <img src="data:image/svg+xml,%3Csvg width='800' height='800' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234a148c;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%237c4dff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23grad1)'/%3E%3Cpath d='M0 400 Q 400 0 800 400' stroke='rgba(255,255,255,0.1)' fill='none' stroke-width='100'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Sarees">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Sarees</h2>
+                        <p class="category-card-subtitle">Handwoven Masterpieces</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Standard Item: Kurtis -->
-            <div class="glass-card bento-item bento-item-standard" onclick="App.openCategory('kurti')">
-                <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300695c;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2326a69a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad2)'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Kurtis">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Kurtis</h2>
-                    <p class="bento-subtitle">Contemporary Chic</p>
+                <!-- 2. Kurtis -->
+                <div class="category-card-new" onclick="App.openCategory('kurti')">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300695c;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2326a69a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad2)'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Kurtis">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Kurtis</h2>
+                        <p class="category-card-subtitle">Contemporary Chic</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Standard Item: Bridal -->
-            <div class="glass-card bento-item bento-item-standard" onclick="App.openCategory('wedding')">
-                <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ad1457;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec407a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad3)'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Bridal">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Bridal</h2>
-                    <p class="bento-subtitle">For Your Special Day</p>
+                <!-- 3. Bridal -->
+                <div class="category-card-new" onclick="App.openCategory('wedding')">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ad1457;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec407a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad3)'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Bridal">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Bridal</h2>
+                        <p class="category-card-subtitle">For Your Special Day</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Wide Item: Silk -->
-            <div class="glass-card bento-item bento-item-standard wide" onclick="App.openCategory('silk')">
-                <img src="data:image/svg+xml,%3Csvg width='800' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad4' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f9a825;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fbc02d;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='400' fill='url(%23grad4)'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Silk">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Pure Silk</h2>
-                    <p class="bento-subtitle">The Fabric of Royalty</p>
+                <!-- 4. Pure Silk -->
+                <div class="category-card-new" onclick="App.openCategory('silk')">
+                    <img src="data:image/svg+xml,%3Csvg width='800' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad4' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f9a825;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fbc02d;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='400' fill='url(%23grad4)'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Silk">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Silk</h2>
+                        <p class="category-card-subtitle">The Fabric of Royalty</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Standard Item: Cotton -->
-            <div class="glass-card bento-item bento-item-standard" onclick="App.openCategory('cotton')">
-                <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad5' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232e7d32;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2366bb6a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad5)'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Cotton">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Cotton</h2>
-                    <p class="bento-subtitle">Everyday Comfort</p>
+                <!-- 5. Cotton -->
+                <div class="category-card-new" onclick="App.openCategory('cotton')">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad5' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232e7d32;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2366bb6a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad5)'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Cotton">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Cotton</h2>
+                        <p class="category-card-subtitle">Everyday Comfort</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Standard Item: Party -->
-            <div class="glass-card bento-item bento-item-standard" onclick="App.openCategory('party')">
-                <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad6' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231565c0;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2342a5f5;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad6)'/%3E%3C/svg%3E"
-                    class="bento-bg-img" alt="Party">
-                <div class="bento-overlay"></div>
-                <div class="bento-content">
-                    <h2 class="bento-title">Party</h2>
-                    <p class="bento-subtitle">Shine & Sparkle</p>
+                <!-- 6. Party Wear -->
+                <div class="category-card-new" onclick="App.openCategory('party')">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad6' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231565c0;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2342a5f5;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23grad6)'/%3E%3C/svg%3E"
+                        class="category-card-img" alt="Party">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <h2 class="category-card-title">Party</h2>
+                        <p class="category-card-subtitle">Shine & Sparkle</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1999,62 +2224,148 @@
     <script>
         const NavigationManager = {
             stack: ['intro'],
-            screenStates: {},
+            stateStack: [{}], // Parallel stack to store state for each history entry
+
+            getCurrentScreen() {
+                return this.stack[this.stack.length - 1];
+            },
+
+            isOnScreen(screenId) {
+                return this.getCurrentScreen() === screenId;
+            },
 
             push(screenId, state = {}) {
                 // Close overlays before navigation
                 this.closeAllOverlays();
 
-                // Hide current screen
                 const current = this.getCurrentScreen();
+                const isOverlay = screenId === 'productDetail'; // Define overlay screens
+
+                // Hide current screen UNLESS we are pushing an overlay
                 if (current) {
-                    document.getElementById(current)?.classList.remove('active');
+                    const el = document.getElementById(current);
+                    if (el) {
+                        if (!isOverlay) {
+                            el.classList.remove('active');
+                        }
+                        // Clean up any stale animation classes on current
+                        el.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                    }
                 }
 
                 // Add to stack
                 this.stack.push(screenId);
-                this.screenStates[screenId] = state;
+                this.stateStack.push(state);
 
                 // Show new screen
                 const newEl = document.getElementById(screenId);
                 if (newEl) {
                     newEl.classList.add('active');
+
+                    // Always animate overlay entry
+                    // Force a more aggressive reset for animations, using requestAnimationFrame
+                    if (isOverlay || (state && state.animate)) {
+                        newEl.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                        newEl.classList.remove('active'); // Temporarily hide to ensure "entry" feel
+
+                        // Force browser to acknowledge the removal
+                        void newEl.offsetWidth;
+
+                        requestAnimationFrame(() => {
+                            newEl.classList.add('active');
+                            newEl.classList.add('slide-in-right');
+                        });
+                    }
                 }
 
-                // Update bottom nav
                 this.updateBottomNav();
-
-                // Update browser history
-                window.history.pushState({ screenId }, '', `#${screenId}`);
+                window.history.pushState({ screenId, state }, '', `#${screenId}`);
             },
 
             pop() {
                 if (this.stack.length <= 1) return false;
 
-                // Close overlays
                 this.closeAllOverlays();
 
-                // Remove current screen
                 const current = this.stack.pop();
-                document.getElementById(current)?.classList.remove('active');
-                delete this.screenStates[current];
+                const currentState = this.stateStack.pop();
+
+                const previous = this.getCurrentScreen(); // New top
+                const previousState = this.stateStack[this.stateStack.length - 1];
+
+                const currEl = document.getElementById(current);
+                const prevEl = document.getElementById(previous);
+
+                // 1. Logic for Internal Product Navigation (Back to previous Product)
+                // If popping ProductDetail to reveal ProductDetail (singleton reuse)
+                const isInternalBack = (current === 'productDetail' && previous === 'productDetail');
+
+                if (isInternalBack && currEl) {
+                    // Restore Content FIRST
+                    if (previousState && previousState.productId) {
+                        App.renderProductDetail(previousState.productId, false);
+                    }
+                    // Apply Back Animation (Enter from Left)
+                    currEl.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-right');
+                    void currEl.offsetWidth;
+
+                    requestAnimationFrame(() => {
+                        currEl.classList.add('slide-in-left');
+                    });
+
+                    this.updateBottomNav();
+                    return true;
+                }
+
+                // 2. Logic for Exit Animation (Product -> Home)
+                // If current screen is an overlay type, we want to animate it OUT
+                const isOverlayExit = (current === 'productDetail');
+
+                if (isOverlayExit && currEl) {
+                    // Ensure previous is visible BEHIND the sliding out screen
+                    if (prevEl) prevEl.classList.add('active');
+
+                    // Animate Out
+                    currEl.classList.remove('slide-in-right', 'slide-in-left');
+                    currEl.classList.add('slide-out-right');
+
+                    // Allow time for animation before hiding
+                    setTimeout(() => {
+                        currEl.classList.remove('active', 'slide-out-right');
+
+                        // Restore state if needed (e.g. scroll position, though tricky with singletons)
+                        if (previous === 'categoryDetailScreen' && previousState) {
+                            // potential restore logic
+                        }
+                    }, 350); // Match CSS duration
+
+                    // If returning to search...
+                    this.checkReturnToSearch(previous);
+                    this.updateBottomNav();
+                    return true;
+                }
+
+                // 3. Standard Navigation (No fancy animation required or immediate switch)
+                if (currEl) {
+                    currEl.classList.remove('active', 'slide-in-right', 'slide-in-left');
+                }
+
+                if (prevEl) {
+                    prevEl.classList.add('active');
+                }
 
                 // Clear category filter if leaving category detail screen
                 if (current === 'categoryDetailScreen') {
                     App.currentCategoryFilter = null;
                 }
 
-                // Show previous screen
-                const previous = this.getCurrentScreen();
-                const prevEl = document.getElementById(previous);
-                if (prevEl) {
-                    prevEl.classList.add('active');
-                }
-
-                // Update bottom nav
+                this.checkReturnToSearch(previous);
                 this.updateBottomNav();
 
-                // Check if returning to search
+                return true;
+            },
+
+            checkReturnToSearch(previous) {
                 if (previous === 'app' && App.returnToSearch) {
                     setTimeout(() => {
                         const searchOverlay = document.getElementById('searchOverlay');
@@ -2071,8 +2382,6 @@
                         App.lastSearchQuery = '';
                     }, 100);
                 }
-
-                return true;
             },
 
             replace(screenId, state = {}) {
@@ -2081,14 +2390,16 @@
 
                 // Replace current screen
                 const current = this.stack.pop();
+                this.stateStack.pop();
+
                 const currEl = document.getElementById(current);
                 if (currEl) {
-                    currEl.classList.remove('active');
+                    currEl.classList.remove('active', 'slide-in-right', 'slide-in-left', 'slide-out-right');
                 }
-                delete this.screenStates[current];
 
                 this.stack.push(screenId);
-                this.screenStates[screenId] = state;
+                this.stateStack.push(state);
+
                 const newEl = document.getElementById(screenId);
                 if (newEl) {
                     newEl.classList.add('active');
@@ -2104,10 +2415,12 @@
                 // Clear stack
                 this.stack.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.classList.remove('active');
+                    if (el) {
+                        el.classList.remove('active', 'slide-in-right', 'slide-in-left', 'slide-out-right');
+                    }
                 });
                 this.stack = [screenId];
-                this.screenStates = {};
+                this.stateStack = [{}];
 
                 // Show new root
                 const rootEl = document.getElementById(screenId);
@@ -2218,6 +2531,7 @@
             lastSearchQuery: '',
             selectedRating: 0,
             currentSizeChartTab: 'saree',
+            currentProductPhotoIndex: 0,
             reviews: {
                 1: [
                     { author: 'Priya K', rating: 5, title: 'Perfect for weddings!', text: 'The silk quality is exceptional. Got so many compliments at the wedding!', date: '2 days ago' },
@@ -2252,10 +2566,10 @@
             },
             products: [
                 // SAREES - SILK & TRADITIONAL
-                { id: 1, name: 'Royal Purple Silk Saree', price: 8999, originalPrice: 12999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%237c4dff"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%234a2c6f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g1)"%3E%3C/rect%3E%3Cpath d="M0 200 Q75 180 150 200 T300 200" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="40"%3E%3C/path%3E%3C/svg%3E', description: 'Royal Purple Silk Saree with intricate gold zari work. Perfect for weddings and grand occasions.' },
-                { id: 2, name: 'Golden Banarasi Silk', price: 15999, originalPrice: 19999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23b8860b"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g2)"%3E%3C/rect%3E%3Cpath d="M50 0 L50 400 M100 0 L100 400 M150 0 L150 400 M200 0 L200 400 M250 0 L250 400" stroke="rgba(255,255,255,0.15)" stroke-width="2"%3E%3C/path%3E%3C/svg%3E', description: 'Traditional Golden Banarasi Silk Saree featuring classic motifs and a rich border.' },
-                { id: 4, name: 'Pink Designer Saree', price: 12999, originalPrice: 16999, category: 'saree', fabric: 'silk', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g4" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23ec407a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g4)"%3E%3C/rect%3E%3C/svg%3E', description: 'Contemporary Pink Designer Saree with modern patterns and a sleek finish.' },
-                { id: 8, name: 'Maroon Kanjivaram', price: 24999, originalPrice: 29999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g8" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23b71c1c"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g8)"%3E%3C/rect%3E%3Cpath d="M0 100 L300 100 M0 200 L300 200 M0 300 L300 300" stroke="%23d4af37" stroke-width="3"%3E%3C/path%3E%3C/svg%3E', description: 'Exquisite Maroon Kanjivaram Saree, a masterpiece of traditional weaving.' },
+                { id: 1, name: 'Royal Purple Silk Saree', price: 8999, originalPrice: 12999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%237c4dff"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%234a2c6f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g1)"%3E%3C/rect%3E%3Cpath d="M0 200 Q75 180 150 200 T300 200" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="40"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%237c4dff"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%234a2c6f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g1)"%3E%3C/rect%3E%3Cpath d="M0 200 Q75 180 150 200 T300 200" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="40"%3E%3C/path%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%237c4dff"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3EAngle 2%3C/text%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%234a2c6f"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3EDetail View%3C/text%3E%3C/svg%3E'], description: 'Royal Purple Silk Saree with intricate gold zari work. Perfect for weddings and grand occasions.' },
+                { id: 2, name: 'Golden Banarasi Silk', price: 15999, originalPrice: 19999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23b8860b"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g2)"%3E%3C/rect%3E%3Cpath d="M50 0 L50 400 M100 0 L100 400 M150 0 L150 400 M200 0 L200 400 M250 0 L250 400" stroke="rgba(255,255,255,0.15)" stroke-width="2"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23d4af37"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23b8860b"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g2)"%3E%3C/rect%3E%3Cpath d="M50 0 L50 400 M100 0 L100 400 M150 0 L150 400 M200 0 L200 400 M250 0 L250 400" stroke="rgba(255,255,255,0.15)" stroke-width="2"%3E%3C/path%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23d4af37"/%3E%3Ctext x="50%25" y="50%25" fill="black" font-size="20" text-anchor="middle" dy=".3em"%3EGolden View%3C/text%3E%3C/svg%3E'], description: 'Traditional Golden Banarasi Silk Saree featuring classic motifs and a rich border.' },
+                { id: 4, name: 'Pink Designer Saree', price: 12999, originalPrice: 16999, category: 'saree', fabric: 'silk', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g4" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23ec407a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g4)"%3E%3C/rect%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g4" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23ec407a"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g4)"%3E%3C/rect%3E%3C/svg%3E', 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%23ec407a"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="20" text-anchor="middle" dy=".3em"%3ELose Shot%3C/text%3E%3C/svg%3E'], description: 'Contemporary Pink Designer Saree with modern patterns and a sleek finish.' },
+                { id: 8, name: 'Maroon Kanjivaram', price: 24999, originalPrice: 29999, category: 'saree', fabric: 'silk', occasion: 'wedding', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g8" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23b71c1c"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g8)"%3E%3C/rect%3E%3Cpath d="M0 100 L300 100 M0 200 L300 200 M0 300 L300 300" stroke="%23d4af37" stroke-width="3"%3E%3C/path%3E%3C/svg%3E', images: ['data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3ClinearGradient id="g8" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23b71c1c"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%23880e4f"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="300" height="400" fill="url(%23g8)"%3E%3C/rect%3E%3Cpath d="M0 100 L300 100 M0 200 L300 200 M0 300 L300 300" stroke="%23d4af37" stroke-width="3"%3E%3C/path%3E%3C/svg%3E'], description: 'Exquisite Maroon Kanjivaram Saree, a masterpiece of traditional weaving.' },
 
                 // SAREES - LIGHTWEIGHT
                 { id: 13, name: 'Sky Blue Georgette', price: 5499, originalPrice: 7999, category: 'saree', fabric: 'georgette', occasion: 'party', image: 'data:image/svg+xml,%3Csvg width="300" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="400" fill="%2387CEEB"/%3E%3Ccircle cx="50" cy="50" r="20" fill="rgba(255,255,255,0.3)"/%3E%3Ccircle cx="250" cy="350" r="30" fill="rgba(255,255,255,0.3)"/%3E%3C/svg%3E', description: 'Lightweight flowy Georgette saree in sky blue. Easy to drape and perfect for parties.' },
@@ -2418,9 +2732,9 @@
                 }
 
                 grid.innerHTML = filtered.map((p, idx) => `
-            <div class="product-card" style="--idx: ${idx}; animation: fadeInUp 0.6s var(--ease-spring) backwards; animation-delay: ${idx * 0.1}s" onclick="App.showProduct(${p.id})">
+            <div class="product-card" style="--idx: ${idx}; animation: fadeInUp 0.6s var(--ease-spring) backwards; animation-delay: ${idx * 0.05}s" onclick="App.showProduct(${p.id})">
                 <div class="product-img">
-                    <img src="${p.image}" alt="${p.name}" loading="lazy">
+                    <img src="${p.image}" alt="${p.name}">
                     <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" onclick="event.stopPropagation(); App.toggleWishlist(${p.id})">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
@@ -2454,6 +2768,10 @@
                 // Navigate
                 NavigationManager.push('categoryDetailScreen');
 
+                // Reset scroll position
+                const screen = document.getElementById('categoryDetailScreen');
+                if (screen) screen.scrollTop = 0;
+
                 // Render Products in Detail Grid
                 const grid = document.getElementById('categoryDetailGrid');
                 if (grid) {
@@ -2469,7 +2787,7 @@
                     grid.innerHTML = filtered.map((p, idx) => `
                         <div class="product-card" style="--idx: ${idx}; animation: fadeInUp 0.6s var(--ease-spring) backwards; animation-delay: ${idx * 0.05}s" onclick="App.showProduct(${p.id})">
                              <div class="product-img">
-                                <img src="${p.image}" alt="${p.name}" loading="lazy">
+                                <img src="${p.image}" alt="${p.name}">
                                 <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" onclick="event.stopPropagation(); App.toggleWishlist(${p.id})">
                                     <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                                 </button>
@@ -2626,26 +2944,103 @@
                 const product = this.products.find(p => p.id === id);
                 if (!product) return;
 
+                // Push to stack with product ID in state
+                // This tracks the "logical" navigation.
+                // We add 'animate: true' for smooth slide-in effect
+                NavigationManager.push('productDetail', { productId: id, animate: true });
+
+                // Render the UI for this product
+                this.renderProductDetail(id, true);
+            },
+
+            renderProductDetail(id, animate = false) {
+                const product = this.products.find(p => p.id === id);
+                if (!product) return;
+
                 this.selectedProduct = product;
                 this.currentProduct = product;
+                this.currentProductPhotoIndex = 0;
 
-                // Update UI
+                // Reset Scroll Position
+                const detailScreen = document.getElementById('productDetail');
+                if (detailScreen) detailScreen.scrollTop = 0;
+
+                // Update UI Elements
                 const img = document.getElementById('detailImage');
                 if (img) img.src = product.image;
+
                 const title = document.getElementById('detailTitle');
                 if (title) title.textContent = product.name;
+
                 const price = document.getElementById('detailPrice');
                 if (price) price.textContent = '₹' + product.price.toLocaleString('en-IN');
+
                 const desc = document.getElementById('detailDesc');
-                if (desc) desc.textContent = product.description || "Premium quality fabric with intricate handwoven patterns.";
+                if (desc) desc.textContent = product.description || "Premium quality fabric with intricate handwoven patterns. Perfect for special occasions and festivals.";
 
                 this.updateDetailCartButtons(id);
+
+                // Initialize Gallery
+                this.initProductGallery();
 
                 // Render reviews and recommendations
                 this.renderReviews(id);
                 this.renderRecommendations(product);
 
-                NavigationManager.push('productDetail', { productId: id });
+                // If animation requested, ensure the container has the class
+                if (animate) {
+                    const detailScreen = document.getElementById('productDetail');
+                    if (detailScreen) {
+                        detailScreen.classList.add('slide-in-right');
+                    }
+                }
+            },
+
+            initProductGallery() {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                const dotsContainer = document.getElementById('galleryDots');
+                const prevBtn = document.getElementById('galleryPrev');
+                const nextBtn = document.getElementById('galleryNext');
+
+                if (dotsContainer) {
+                    dotsContainer.innerHTML = images.map((_, idx) => `
+                        <span class="gallery-dot ${idx === 0 ? 'active' : ''}" onclick="App.goToProductPhoto(${idx})"></span>
+                    `).join('');
+                }
+
+                if (prevBtn && nextBtn) {
+                    const hasMultiple = images.length > 1;
+                    prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+                    nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+                }
+            },
+
+            changeProductPhoto(delta) {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                const newIndex = (this.currentProductPhotoIndex + delta + images.length) % images.length;
+                this.goToProductPhoto(newIndex);
+            },
+
+            goToProductPhoto(idx) {
+                const product = this.currentProduct;
+                const images = product.images || [product.image];
+                this.currentProductPhotoIndex = idx;
+
+                const img = document.getElementById('detailImage');
+                if (img) {
+                    img.style.opacity = '0';
+                    setTimeout(() => {
+                        img.src = images[idx];
+                        img.style.opacity = '1';
+                    }, 200);
+                }
+
+                // Update dots
+                document.querySelectorAll('.gallery-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === idx);
+                });
             },
 
             renderReviews(productId) {
@@ -3204,6 +3599,13 @@
                 const badge = document.getElementById('searchCategoryBadge');
                 if (badge) badge.classList.remove('active');
 
+                const fabricSelect = document.getElementById('filterFabric');
+                const priceSelect = document.getElementById('filterPrice');
+                const sortSelect = document.getElementById('sortOptions');
+                if (fabricSelect) fabricSelect.value = '';
+                if (priceSelect) priceSelect.value = '';
+                if (sortSelect) sortSelect.value = 'newest';
+
                 const searchInput = document.getElementById('searchInput');
                 if (searchInput) {
                     searchInput.placeholder = 'Search sarees, kurtis, silk...';
@@ -3257,6 +3659,14 @@
                         if (badge) badge.classList.remove('active');
                     }
 
+                    // Reset Filters
+                    const fabricSelect = document.getElementById('filterFabric');
+                    const priceSelect = document.getElementById('filterPrice');
+                    const sortSelect = document.getElementById('sortOptions');
+                    if (fabricSelect) fabricSelect.value = '';
+                    if (priceSelect) priceSelect.value = '';
+                    if (sortSelect) sortSelect.value = 'newest';
+
                     const input = document.getElementById('searchInput');
                     input.value = '';
                     this.handleSearch('');
@@ -3267,7 +3677,12 @@
             handleSearch(query) {
                 const resultsContainer = document.getElementById('searchResults');
 
-                if (!query.trim()) {
+                // Get filter values
+                const fabricFilter = document.getElementById('filterFabric')?.value;
+                const priceFilter = document.getElementById('filterPrice')?.value;
+                const sortFilter = document.getElementById('sortOptions')?.value;
+
+                if (!query.trim() && !fabricFilter && !priceFilter) {
                     resultsContainer.innerHTML = `
                         <div class="search-empty">
                             <div class="search-empty-icon">
@@ -3282,12 +3697,28 @@
                     return;
                 }
 
-                // Filter products based on search query
-                let filtered = this.products.filter(p =>
-                    p.name.toLowerCase().includes(query.toLowerCase()) ||
-                    p.category.toLowerCase().includes(query.toLowerCase()) ||
-                    p.fabric.toLowerCase().includes(query.toLowerCase())
-                );
+                // Start with all products or category-filtered products
+                let filtered = [...this.products];
+
+                // Apply Search Text Query
+                if (query.trim()) {
+                    filtered = filtered.filter(p =>
+                        p.name.toLowerCase().includes(query.toLowerCase()) ||
+                        p.category.toLowerCase().includes(query.toLowerCase()) ||
+                        p.fabric.toLowerCase().includes(query.toLowerCase())
+                    );
+                }
+
+                // Apply Fabric Filter
+                if (fabricFilter) {
+                    filtered = filtered.filter(p => p.fabric === fabricFilter);
+                }
+
+                // Apply Price Filter
+                if (priceFilter) {
+                    const [min, max] = priceFilter.split('-').map(Number);
+                    filtered = filtered.filter(p => p.price >= min && p.price <= max);
+                }
 
                 // If we're in a category view, filter by that category
                 if (this.currentCategoryFilter) {
@@ -3296,6 +3727,13 @@
                         p.fabric === this.currentCategoryFilter ||
                         (p.occasion && p.occasion === this.currentCategoryFilter)
                     );
+                }
+
+                // Apply Sorting
+                if (sortFilter === 'priceLow') {
+                    filtered.sort((a, b) => a.price - b.price);
+                } else if (sortFilter === 'priceHigh') {
+                    filtered.sort((a, b) => b.price - a.price);
                 }
 
                 if (filtered.length === 0) {
@@ -3336,6 +3774,11 @@
                         </div>
                     </div>
                 `).join('');
+            },
+
+            handleFilterChange() {
+                const searchInput = document.getElementById('searchInput');
+                this.handleSearch(searchInput ? searchInput.value : '');
             },
 
             filterCategoryView(filter) {
