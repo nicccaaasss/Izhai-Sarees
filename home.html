@@ -4517,32 +4517,6 @@
                 }
             }
 
-            // Scroll-aware bottom navbar
-            let lastScrollY = 0;
-            let ticking = false;
-
-            function updateNavbar() {
-                const currentScrollY = window.scrollY;
-
-                if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                    if (bottomNav) bottomNav.classList.add('nav-hidden');
-                } else {
-                    if (bottomNav) bottomNav.classList.remove('nav-hidden');
-                }
-
-                lastScrollY = currentScrollY;
-                ticking = false;
-            }
-
-            function requestNavbarUpdate() {
-                if (!ticking) {
-                    window.requestAnimationFrame(updateNavbar);
-                    ticking = true;
-                }
-            }
-
-            window.addEventListener('scroll', requestNavbarUpdate, { passive: true });
-
             // Scroll-triggered fade-in animations
             const observerOptions = {
                 threshold: 0.1,
@@ -4591,6 +4565,11 @@
             }
 
             window.addEventListener('scroll', handleScroll, { passive: true });
+
+            // Attach scroll listener to all scrollable screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.addEventListener('scroll', handleScroll, { passive: true });
+            });
 
             // Initialize main app
             App.init();

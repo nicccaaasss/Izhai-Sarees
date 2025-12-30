@@ -1474,7 +1474,7 @@
             justify-content: space-around;
             align-items: center;
             padding: 8px 0;
-            z-index: 1000
+            z-index: 9999
         }
 
         .nav-item {
@@ -3937,7 +3937,7 @@
             animation: liquidGlassSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 
             /* Prevent bottom padding issues */
-            z-index: 1000;
+            z-index: 9999;
         }
 
         /* Liquid Glass Slide Up Animation */
@@ -4757,6 +4757,7 @@
             color: var(--purple-900);
             letter-spacing: -1px;
             background: linear-gradient(135deg, var(--purple-800), var(--purple-600));
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
