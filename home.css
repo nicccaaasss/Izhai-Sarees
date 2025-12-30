@@ -1516,21 +1516,13 @@
             font-weight: 600
         }
 
+        /* Removed static indicator to use JS sliding #navIndicator */
         .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 40px;
-            height: 3px;
-            background: var(--purple-600);
-            border-radius: 0 0 4px 4px;
-            transition: transform var(--dur-med) var(--ease-elastic)
+            display: none;
         }
 
         .nav-item.active::before {
-            transform: translateX(-50%) scaleX(1)
+            display: none;
         }
 
         .overlay {
